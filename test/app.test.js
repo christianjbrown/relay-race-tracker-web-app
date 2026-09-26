@@ -228,7 +228,7 @@ describe('App', () => {
     });
 
     it('refreshes an attached sheet', () => {
-      const { app, deps } = makeApp();
+      const { app } = makeApp();
       const sheet = { refresh: vi.fn() };
       app.attach(null, sheet);
       app.render();

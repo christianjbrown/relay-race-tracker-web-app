@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,4 +18,31 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run ci
+      - run: npm run lint
+
+  # Every Node version the README promises: the tests with their coverage
+  # gate, then a build of the example site.
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: node tools/build.js --site example-site --out dist
+
+  # The one check branch protection requires, so the matrix can change
+  # without touching the protection settings.
+  ci:
+    if: always()
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: test "${{ needs.lint.result }}" = success && test "${{ needs.test.result }}" = success
