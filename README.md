@@ -210,12 +210,12 @@ are free for public repositories, and private ones get a monthly allowance.
 
 **Keeping your site apart from this code.** Instead of copying this
 repository, you can keep a repository of your own that holds just `site/`,
-with this one added as a git submodule, and build into its root with
-`node engine/tools/build.js --site site --out .`. Taking a newer version is
-then a submodule update and a rebuild.
-[where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk)
-is set up this way, publishing from its branch with a `build.sh` that does it
-all.
+with this one added as a git submodule called `engine`, and a workflow that
+runs `node engine/tools/build.js --site site --out dist` and publishes
+`dist`. Nothing built is committed, and taking a newer version is a
+submodule update. [where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk)
+is set up this way; copy its
+[deploy workflow](https://github.com/christianjbrown/where-is-angela.christianbrown.uk/blob/main/.github/workflows/deploy.yml).
 
 **On your own domain.** Any domain works, whether a whole domain such as
 `example.com` or a subdomain of one you already have. Set it in the
