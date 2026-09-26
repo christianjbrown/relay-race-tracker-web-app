@@ -1,16 +1,16 @@
 import { timelinePosition } from '../domain/activity-states.js';
 import { escapeHtml } from './escape-html.js';
-import { COLOURS } from './theme.js';
 
 /** The whole schedule, with what is done, what is now and what is still to come. */
 export class TimelineView {
-  constructor(els, words, formats, badges, describer, schedule) {
+  constructor(els, words, formats, badges, describer, schedule, colours) {
     this.els = els;
     this.words = words;
     this.formats = formats;
     this.badges = badges;
     this.describer = describer;
     this.schedule = schedule;
+    this.colours = colours;
   }
 
   render(act) {
@@ -22,7 +22,7 @@ export class TimelineView {
 
   item(seg, i, nowAt) {
     const li = this.els.create('li');
-    li.style.setProperty('--dot', COLOURS[seg.kind]);
+    li.style.setProperty('--dot', this.colours[seg.kind]);
     if (i === nowAt) li.className = 'now';
     else if (i < nowAt) li.className = 'past';
     const when = `${this.formats.dayTime(seg.start)}–${this.formats.time(seg.end)}`;

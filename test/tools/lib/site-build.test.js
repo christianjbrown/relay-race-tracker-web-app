@@ -51,6 +51,8 @@ describe('SiteBuild', () => {
     expect(html).toContain('hreflang="de"');
     expect(html).toContain('name="robots" content="noindex"');
     expect(html).toContain('og:image');
+    expect(html).toContain('<style>:root { --run: #EB6834;');
+    expect(html.indexOf('<style>:root')).toBeGreaterThan(html.indexOf('href="style.css"'));
 
     const cardImg = await canvas.loadImage(await readFile(path.join(out, 'og-card.png')));
     expect(cardImg.width).toBe(1200);

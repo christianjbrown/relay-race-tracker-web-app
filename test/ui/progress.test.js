@@ -1,13 +1,16 @@
+import { resolveColours } from '../../src/config/colours.js';
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import {
   DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress,
 } from '../../src/ui/progress.js';
 import { Elements } from '../../src/ui/dom.js';
-import { COLOURS } from '../../src/ui/theme.js';
 import { LOCALES } from '../../src/i18n/locales/index.js';
 import { Formats } from '../../src/i18n/formats.js';
 import { makeRelay, at } from '../fixtures/relay.js';
+
+// A palette of the site's own, to show the views use what they are given.
+const COLOURS = resolveColours({ run: '#123456', drive: '#234567', sleep: '#345678', free: '#456789' });
 
 const words = LOCALES.en.words({ name: 'Sam', vehicle: 'bus' });
 const formats = new Formats('en-GB', 'Europe/Brussels', words);

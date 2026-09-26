@@ -50,7 +50,7 @@ import { DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress
 import { SchedulePanel } from './ui/schedule-panel.js';
 import { SheetDrag } from './ui/sheet-drag.js';
 import { StatusView } from './ui/status-view.js';
-import { chooseTheme, COLOURS } from './ui/theme.js';
+import { chooseTheme } from './ui/theme.js';
 import { TimelineView } from './ui/timeline-view.js';
 import { ViewControls } from './ui/view-controls.js';
 
@@ -79,17 +79,18 @@ function browserStorage(win) {
 /** Everything the card needs, drawn once from the clock alone while the map loads. */
 function buildCard(els, page) {
   const { words, formats, badges, describer, schedule, course, config } = page;
+  const { colours } = config;
   return new Card({
     status: new StatusView(els, words, badges, describer, page.birthday),
-    progress: new ProgressView(els, COLOURS, [
+    progress: new ProgressView(els, colours, [
       new WaitingProgress(course, words, formats),
       new DriveProgress(words, formats),
       new RunProgress(course, words, formats),
       new TimeProgress(words, formats),
     ]),
-    next: new NextView(els, words, formats, badges, describer, schedule),
+    next: new NextView(els, words, formats, badges, describer, schedule, colours),
     meta: new MetaView(els, words, formats, config.tuning.staleMs),
-    timeline: new TimelineView(els, words, formats, badges, describer, schedule),
+    timeline: new TimelineView(els, words, formats, badges, describer, schedule, colours),
   });
 }
 
@@ -122,7 +123,7 @@ export async function boot(win, state = {}) {
   const describer = new SegmentDescriber(words, formats, code);
   const badges = makeBadges(config.emoji, config.vehicle);
   const birthday = new Birthday(config.birthday, formats);
-  new CardLabels(els, words, code, theme).render();
+  new CardLabels(els, words, code, theme, config.colours).render();
   const schedulePanel = new SchedulePanel(els);
   schedulePanel.bind();
   const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday });
@@ -144,7 +145,7 @@ export async function boot(win, state = {}) {
   const bibs = { runner: config.chronorace.runnerTracker, vehicle: config.chronorace.vehicleTracker };
   let view = null;
   const RunnerMarker = makeRunnerMarker(maps, win.document);
-  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: COLOURS, badges, onClick: () => view.follow() });
+  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => view.follow() });
   runnerMarker.setMap(map);
   const VehicleMarker = makeVehicleMarker(maps, win.document);
   const vehicleMarker = new VehicleMarker(`${badges.drive} ${words.vehicle}`);
@@ -171,7 +172,7 @@ export async function boot(win, state = {}) {
     }),
     eta: new DriveEta(router),
     course,
-    painter: new Painter(maps, map, theme, COLOURS),
+    painter: new Painter(maps, map, theme, config.colours),
     card,
     runnerMarker,
     vehicleMarker,

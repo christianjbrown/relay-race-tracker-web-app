@@ -1,12 +1,13 @@
-import { COLOURS, KINDS } from './theme.js';
+import { KINDS } from './theme.js';
 
 /** The card's fixed words, in the reader's language, and the legend. */
 export class CardLabels {
-  constructor(els, words, lang, theme) {
+  constructor(els, words, lang, theme, colours) {
     this.els = els;
     this.words = words;
     this.lang = lang;
     this.theme = theme;
+    this.colours = colours;
   }
 
   render() {
@@ -22,7 +23,7 @@ export class CardLabels {
 
     const legend = this.els.get('legend');
     legend.replaceChildren(
-      ...KINDS.map((kind) => this.dot(COLOURS[kind], w.kinds[kind])),
+      ...KINDS.map((kind) => this.dot(this.colours[kind], w.kinds[kind])),
       this.dot(this.theme.course, w.course),
     );
     const planned = this.dot('transparent', w.planned);

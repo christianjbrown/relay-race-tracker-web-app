@@ -167,6 +167,7 @@ browser sends it to Google, which is why the restrictions matter.
 | `site.url` | The full address the page will be published at, ending in `/`, such as `https://www.example.com/` or `https://<your-user>.github.io/<repo>/`. Link previews need it. |
 | `site.indexable` | `true` to let search engines list the page. Default `false`. |
 | `mapsApiKey` | The key from step 7. |
+| `colours` | Optional. Your own colours as `"#rrggbb"`: `run`, `drive`, `sleep` and `free` for each kind of segment on the map, the card and the share card, and `accent` for the main button, which follows `run` unless given. |
 | `tuning` | Optional. See [Tuning](#tuning). |
 
 The build checks all of this and lists anything that is missing or wrong.
