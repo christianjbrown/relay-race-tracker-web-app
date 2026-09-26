@@ -1,4 +1,6 @@
-# Relay Race Tracker
+# 🏃 Relay Race Tracker 🚌
+
+> Where's your runner right now? On a leg, on the bus, or fast asleep in a hotel? 🗺️
 
 A web page for following one person through a multi-leg relay race that
 [Chronorace](https://www.chronorace.be) tracks with GPS. It shows friends and
@@ -24,11 +26,11 @@ documented API and could change.
   <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam on the bus to the team hotel, arriving in about 9 minutes">
 </p>
 
-**Ask first.** This page shows a real person's live location to anyone with
+⚠️ **Ask first.** This page shows a real person's live location to anyone with
 the link. Make sure the runner is happy with that, and leave `site.indexable`
 off (the default) unless they want the page to turn up in search engines.
 
-## What it shows
+## 👀 What it shows
 
 - The runner on a map, with a badge for what they are doing, and their
   vehicle as a separate tag when it has a live position.
@@ -41,10 +43,22 @@ off (the default) unless they want the page to turn up in search engines.
 - A share card and link preview made from the real route, and a birthday cake
   on the day if you give a birthday.
 
-The page speaks English and German, and picks whichever the reader's browser
+The runner's badge on the map changes with what they are doing:
+
+| Badge | Means |
+|---|---|
+| 🏃 | running a leg (or 🏃‍♀️, 🚴, whatever you choose) |
+| 🚌 | on the bus between legs (🚐 for a van, 🚗 for a car) |
+| ⏳ | waiting to take over from the runner coming in |
+| 💤 | resting |
+| 🕹️ | free time |
+| 🏁 | finished! |
+| 🎂 | it's their birthday |
+
+The page speaks English 🇬🇧 and German 🇩🇪, and picks whichever the reader's browser
 prefers from the languages you choose.
 
-## What you need
+## 🧰 What you need
 
 - A Chronorace event with live GPS tracking. You need a tracker that follows
   your runner's team while they run, usually labelled something like `RUN`,
@@ -58,9 +72,9 @@ prefers from the languages you choose.
 - Optionally, a domain of your own. Without one the page is published at
   `https://<your-user>.github.io/<repo>/`, which works just as well.
 
-## Set it up
+## 🛠️ Set it up
 
-### 1. Make your own copy
+### 1. 📋 Make your own copy
 
 On GitHub, use **Use this template** to make a new repository, then clone it.
 Otherwise, clone this one and push it somewhere of your own.
@@ -69,7 +83,7 @@ Otherwise, clone this one and push it somewhere of your own.
 npm ci
 ```
 
-### 2. Start your config folder
+### 2. 📁 Start your config folder
 
 Everything about your runner and your event lives in one folder, `config/`. The
 repository ships with a made-up example in `example-config/`. Copy it:
@@ -82,7 +96,7 @@ cp -r example-config config
 shared project by accident. In your own copy you will want to commit it, so
 delete the `/config/` line from `.gitignore`.
 
-### 3. Find the event and the trackers
+### 3. 📡 Find the event and the trackers
 
 Open the event's live tracking page on Chronorace with your browser's developer
 tools open on the Network tab. Look for a request to
@@ -103,7 +117,7 @@ VAN2  Van 2      TRK-0118       2027-05-15T07:02:07.093Z
 The `Bib` column is what the config calls each tracker. Put the event id and
 the two Bibs in `config/config.json` under `chronorace`.
 
-### 4. Fetch the course
+### 4. 🗺️ Fetch the course
 
 ```bash
 npm run fetch-route
@@ -116,7 +130,7 @@ write or edit it by hand. The build publishes it to the page in Google's
 compact encoded form, which is several times smaller. If the event has more than one course,
 it tells you, and `--track "Name"` picks another.
 
-### 5. Write the schedule
+### 5. 🗓️ Write the schedule
 
 `config/schedule.json` is your runner's own timeline as a list of segments in
 order, with no gaps. Every moment from the first segment to the last must
@@ -141,14 +155,14 @@ and a town centre can be a kilometre or more out.
 
 `example-config/schedule.json` is a complete example to copy from.
 
-### 6. Add the photo
+### 6. 📸 Add the photo
 
 Save it as `config/photo.png` (or `.jpg`, `.jpeg`, `.webp`). The build turns it
 into a round sticker with a white border for the map, the card, the favicon
 and the share card. If you already have a finished sticker, save it as
 `config/avatar.png` instead and it will be used exactly as it is.
 
-### 7. Get a Google Maps key
+### 7. 🔑 Get a Google Maps key
 
 1. Create a project in the [Google Cloud console](https://console.cloud.google.com).
 2. Enable the **Maps JavaScript API** and the **Directions API**. Google gives
@@ -161,7 +175,7 @@ and the share card. If you already have a finished sticker, save it as
 The key goes in `config/config.json`. It is not a secret: every visitor's
 browser sends it to Google, which is why the restrictions matter.
 
-### 8. Fill in the config
+### 8. ⚙️ Fill in the config
 
 `config/config.json`:
 
@@ -185,7 +199,7 @@ browser sends it to Google, which is why the restrictions matter.
 
 The build checks all of this and lists anything that is missing or wrong.
 
-### 9. Build it and try it
+### 9. 🔍 Build it and try it
 
 ```bash
 npm run build
@@ -201,7 +215,7 @@ Chronorace has none.
 `npm run build` writes the finished page to `dist/`. Run it again whenever you
 change anything in `config/`.
 
-### 10. Publish it
+### 10. 🚀 Publish it
 
 **With GitHub Actions.** The included `Deploy` workflow builds `config/` and
 publishes it to GitHub Pages on every push to `main`. In your repository's
@@ -230,14 +244,14 @@ gives: `A` and `AAAA` records for a whole domain, or a `CNAME` pointing at
 put a file named `CNAME` holding just the domain in `config/`, and the build
 copies it. Either way, make `site.url` in the config match.
 
-## Page options
+## 🎛️ Page options
 
 - `?at=2027-05-15T04:30` shows any moment of the schedule, read in the event's
   time zone.
 - `?lang=de` or `?lang=en` picks the language, so a link can carry one.
 - `?theme=light` shows the light map. It is dark by default.
 
-## How it works out where the runner is
+## 🧠 How it works out where the runner is
 
 The schedule is a guide, and the trackers correct it:
 
@@ -260,7 +274,7 @@ The schedule is a guide, and the trackers correct it:
   if the vehicle takes another road. The arrival time comes from Google's
   estimate with today's traffic. A drive carries on past its planned end until
   the vehicle is at the door or parked nearby.
-- **After the finish** the runner stays on the finish line.
+- **After the finish** the runner stays on the finish line. 🏁
 - **If Chronorace fails**, the problem is logged to the browser console and the
   position is estimated from the schedule: time divided equally along the leg
   or the road, or at the stop.
@@ -268,7 +282,9 @@ The schedule is a guide, and the trackers correct it:
 Chronorace is asked for positions every 30 seconds. A position more than 15
 minutes old is shown as possibly off.
 
-## Tuning
+<a id="tuning"></a>
+
+## 🎚️ Tuning
 
 Every threshold above can be changed under `tuning` in `config/config.json`, in
 the units its name gives. The defaults are the values that worked on a real
@@ -278,7 +294,7 @@ relay, and each is explained in [`src/config/tuning.js`](src/config/tuning.js).
 "tuning": { "jogKmh": 10, "staleMinutes": 10 }
 ```
 
-## Development
+## 🧪 Development
 
 ```bash
 npm run lint    # ESLint
@@ -309,6 +325,6 @@ To add a language, copy `src/i18n/locales/en.js`, translate it, and add it to
 `src/i18n/locales/index.js`. A test checks that every language has every
 string.
 
-## Licence
+## 📜 Licence
 
 MIT. See [LICENSE](LICENSE).
