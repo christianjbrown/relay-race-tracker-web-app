@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alongPath, clamp, decodePolyline, kmApart, lerp, lngScale, nearestOnPath, roundToKm, shareOf } from '../../src/domain/geo.js';
+import { alongPath, clamp, decodePolyline, encodePolyline, kmApart, lerp, lngScale, nearestOnPath, roundToKm, shareOf } from '../../src/domain/geo.js';
 
 describe('distances', () => {
   it('measures a degree of latitude as 111.2 km', () => {
@@ -91,5 +91,20 @@ describe('decodePolyline', () => {
 describe('roundToKm', () => {
   it('rounds to two decimal places of a degree', () => {
     expect(roundToKm({ lat: 50.12345, lng: 4.98765 })).toEqual({ lat: 50.12, lng: 4.99 });
+  });
+});
+
+describe('encodePolyline', () => {
+  it('encodes Google\'s example polyline', () => {
+    expect(encodePolyline([{ lat: 38.5, lng: -120.2 }, { lat: 40.7, lng: -120.95 }, { lat: 43.252, lng: -126.453 }])).toBe('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
+  });
+
+  it('rounds to five decimal places, and round-trips', () => {
+    const points = [{ lat: 51.256864, lng: 6.746099 }, { lat: 0, lng: 0 }, { lat: -0.00001, lng: 179.99999 }];
+    expect(decodePolyline(encodePolyline(points))).toEqual([{ lat: 51.25686, lng: 6.7461 }, { lat: 0, lng: 0 }, { lat: -0.00001, lng: 179.99999 }]);
+  });
+
+  it('encodes no points as nothing', () => {
+    expect(encodePolyline([])).toBe('');
   });
 });

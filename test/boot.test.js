@@ -4,6 +4,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { boot, loadSite, start } from '../src/boot.js';
 import { fakeMaps, flatProjection } from './fakes/google-maps.js';
+import { publishedRoute } from '../tools/lib/route-file.js';
 
 const TEMPLATE = fs.readFileSync(path.resolve(__dirname, '../index.template.html'), 'utf8');
 const BODY = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[\s\S]*?<\/script>/, '');
@@ -11,7 +12,8 @@ const BODY = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[\s\S]
 const SITE_DIR = path.resolve(__dirname, '../example-site');
 const config = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'config.json'), 'utf8'));
 const schedule = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'schedule.json'), 'utf8'));
-const route = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'route.json'), 'utf8'));
+// The page downloads the route as the build publishes it: encoded.
+const route = publishedRoute(JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'route.json'), 'utf8')));
 
 function jsonResponse(body, ok = true, status = 200) {
   return { ok, status, json: async () => body };

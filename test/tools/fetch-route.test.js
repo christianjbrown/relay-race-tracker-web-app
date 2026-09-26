@@ -27,13 +27,13 @@ describe('tools/fetch-route.js', () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.stubGlobal('fetch', vi.fn(async () => ({
       ok: true,
-      json: async () => ({ Tracks: [{ Name: 'Example course', Polylines: ['abc'] }] }),
+      json: async () => ({ Tracks: [{ Name: 'Example course', Polylines: ['_p~iF~ps|U_ulLnnqC'] }] }),
     })));
 
     await import(/* @vite-ignore */ `../../tools/fetch-route.js?${Math.random()}`);
 
     expect(process.exitCode).toBeUndefined();
     const written = JSON.parse(await readFile(path.join(site, 'route.json'), 'utf8'));
-    expect(written).toEqual({ name: 'Example course', polylines: ['abc'] });
+    expect(written).toEqual({ name: 'Example course', points: [{ lat: 38.5, lng: -120.2 }, { lat: 40.7, lng: -120.95 }] });
   });
 });

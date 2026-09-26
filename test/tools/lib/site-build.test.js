@@ -8,6 +8,7 @@ import { nodeFiles } from '../../../tools/lib/node-files.js';
 import { OgCard } from '../../../tools/lib/og-card.js';
 import { SiteBuild } from '../../../tools/lib/site-build.js';
 import { Icons, Sticker } from '../../../tools/lib/sticker.js';
+import { decodePolyline } from '../../../src/domain/geo.js';
 
 const repoRoot = path.join(import.meta.dirname, '..', '..', '..');
 const exampleSite = path.join(repoRoot, 'example-site');
@@ -67,7 +68,12 @@ describe('SiteBuild', () => {
 
     await readFile(path.join(out, 'data', 'config.json'), 'utf8');
     await readFile(path.join(out, 'data', 'schedule.json'), 'utf8');
-    await readFile(path.join(out, 'data', 'route.json'), 'utf8');
+    // Published encoded, and decoding it gives back the site's points.
+    const published = JSON.parse(await readFile(path.join(out, 'data', 'route.json'), 'utf8'));
+    const source = JSON.parse(await readFile(path.join(site, 'route.json'), 'utf8'));
+    expect(published.name).toBe('Example course');
+    expect(published.polylines).toHaveLength(1);
+    expect(decodePolyline(published.polylines[0])).toEqual(source.points);
     await readFile(path.join(out, 'style.css'), 'utf8');
     await readFile(path.join(out, 'src', 'main.js'), 'utf8');
     await readFile(path.join(out, 'robots.txt'), 'utf8');
@@ -164,12 +170,12 @@ describe('SiteBuild', () => {
     await expect(build().build.run({ site, out })).rejects.toThrow(/route\.json is missing/);
   });
 
-  it('throws when route.json has no polylines', async () => {
+  it('throws when route.json has no points', async () => {
     dir = await tempDir();
     const site = await copySite(dir);
-    await writeFile(path.join(site, 'route.json'), JSON.stringify({ name: 'x', polylines: [] }));
+    await writeFile(path.join(site, 'route.json'), JSON.stringify({ name: 'x', polylines: ['abc'] }));
     const out = path.join(dir, 'out');
-    await expect(build().build.run({ site, out })).rejects.toThrow(/has no "polylines"/);
+    await expect(build().build.run({ site, out })).rejects.toThrow(/needs "points"/);
   });
 
   it('refuses to build into the site folder', async () => {

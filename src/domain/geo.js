@@ -85,3 +85,27 @@ export function decodePolyline(encoded) {
 
 /** Rounds a position to about a kilometre, so a moving vehicle asks for a new route every kilometre or so, not every poll. */
 export const roundToKm = (p) => ({ lat: +p.lat.toFixed(2), lng: +p.lng.toFixed(2) });
+
+/** Encodes positions as a Google encoded polyline, to five decimal places: the compact form the page downloads. */
+export function encodePolyline(points) {
+  let out = '';
+  let lastLat = 0;
+  let lastLng = 0;
+  const put = (delta) => {
+    let v = delta < 0 ? ~(delta << 1) : delta << 1;
+    while (v >= 0x20) {
+      out += String.fromCharCode((0x20 | (v & 0x1f)) + 63);
+      v >>= 5;
+    }
+    out += String.fromCharCode(v + 63);
+  };
+  for (const p of points) {
+    const lat = Math.round(p.lat * 1e5);
+    const lng = Math.round(p.lng * 1e5);
+    put(lat - lastLat);
+    put(lng - lastLng);
+    lastLat = lat;
+    lastLng = lng;
+  }
+  return out;
+}

@@ -109,8 +109,11 @@ the two Bibs in `site/config.json` under `chronorace`.
 npm run fetch-route
 ```
 
-This writes `site/route.json` from Chronorace. Commit it, so the page keeps
-working after the event is taken down. If the event has more than one course,
+This writes `site/route.json` from Chronorace: the course as a list of points,
+one per line, `{ "lat": 51.2254, "lng": 2.9186 }`, from start to finish. Commit
+it, so the page keeps working after the event is taken down. You can also
+write or edit it by hand. The build publishes it to the page in Google's
+compact encoded form, which is several times smaller. If the event has more than one course,
 it tells you, and `--track "Name"` picks another.
 
 ### 5. Write the schedule
