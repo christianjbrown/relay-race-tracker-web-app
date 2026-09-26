@@ -140,7 +140,7 @@ and the share card. If you already have a finished sticker, save it as
 2. Enable the **Maps JavaScript API** and the **Directions API**. Google gives
    a free monthly allowance that a page like this stays well inside.
 3. Create an API key. Under **Application restrictions** choose websites and
-   add your page's address (for example `https://where-is-sam.example.com/*`)
+   add your page's address (for example `https://www.example.com/*`)
    and `http://localhost:8765/*` for trying it out. Under **API restrictions**
    allow only the two APIs above.
 
@@ -162,7 +162,7 @@ browser sends it to Google, which is why the restrictions matter.
 | `event.name`, `event.from`, `event.to` | The event and where it starts and finishes, for the page's title, description and share card. Each can be a string or one per language. |
 | `chronorace.eventId` | The event id, as a string. |
 | `chronorace.runnerTracker`, `chronorace.vehicleTracker` | The two Bibs from step 3. |
-| `site.url` | The full address the page will be published at, ending in `/`. Link previews need it. |
+| `site.url` | The full address the page will be published at, ending in `/`, such as `https://www.example.com/` or `https://<your-user>.github.io/<repo>/`. Link previews need it. |
 | `site.indexable` | `true` to let search engines list the page. Default `false`. |
 | `mapsApiKey` | The key from step 7. |
 | `tuning` | Optional. See [Tuning](#tuning). |
@@ -196,11 +196,14 @@ are free for public repositories, and private ones get a monthly allowance.
 `npm run build -- --out docs`, commit `docs/`, and set Pages to publish the
 `docs` folder of `main`.
 
-**On your own domain.** Set it in the repository's Pages settings and add the
-DNS record GitHub asks for, usually a `CNAME` pointing at
-`<your-user>.github.io`. When publishing from a branch, also put a file named
-`CNAME` holding just the domain in `site/`, and the build copies it. Either
-way, make `site.url` in the config match.
+**On your own domain.** Any domain works, whether a whole domain such as
+`example.com` or a subdomain of one you already have. Set it in the
+repository's Pages settings, then add the DNS records GitHub's
+[custom domain guide](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
+gives: `A` and `AAAA` records for a whole domain, or a `CNAME` pointing at
+`<your-user>.github.io` for a subdomain. When publishing from a branch, also
+put a file named `CNAME` holding just the domain in `site/`, and the build
+copies it. Either way, make `site.url` in the config match.
 
 ## Page options
 

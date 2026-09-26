@@ -8,7 +8,7 @@ const baseRaw = {
   timezone: 'Europe/Brussels',
   event: { name: 'Coast Relay', from: 'Ostend', to: 'Brussels' },
   chronorace: { eventId: '0', runnerTracker: 'RUN', vehicleTracker: 'VAN1' },
-  site: { url: 'https://example.com/where-is-sam/' },
+  site: { url: 'https://www.example.com/' },
   mapsApiKey: '',
 };
 
@@ -26,11 +26,11 @@ describe('PageHead', () => {
     const head = new PageHead(config({ languages: ['en', 'de'], site: { url: baseRaw.site.url, indexable: true } }), segments, LOCALES);
     const html = head.render('abc123');
     expect(html).toContain('<title>Where is Sam? · Wo ist Sam? – Coast Relay</title>');
-    expect(html).toContain('<link rel="canonical" href="https://example.com/where-is-sam/">');
+    expect(html).toContain('<link rel="canonical" href="https://www.example.com/">');
     expect(html).toContain('hreflang="en"');
     expect(html).toContain('hreflang="de"');
     expect(html).toContain('hreflang="x-default"');
-    expect(html).toContain('og:image" content="https://example.com/where-is-sam/og-card.png?v=abc123"');
+    expect(html).toContain('og:image" content="https://www.example.com/og-card.png?v=abc123"');
     expect(html).toContain('og:locale:alternate');
     expect(html).not.toContain('noindex');
   });

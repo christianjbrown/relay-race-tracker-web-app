@@ -16,7 +16,7 @@
     "vehicleTracker": "VAN1"
   },
   "site": {
-    "url": "https://example.com/where-is-sam/",
+    "url": "https://www.example.com/",
     "indexable": false
   },
   "mapsApiKey": ""
