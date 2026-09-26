@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const repoRoot = path.join(import.meta.dirname, '..', '..');
-const exampleSite = path.join(repoRoot, 'example-site');
+const exampleSite = path.join(repoRoot, 'example-config');
 
 describe('tools/build.js', () => {
   let dir;
@@ -23,7 +23,7 @@ describe('tools/build.js', () => {
     const site = path.join(dir, 'site');
     await cp(exampleSite, site, { recursive: true });
     const out = path.join(dir, 'out');
-    process.argv = ['node', 'build.js', '--site', site, '--out', out];
+    process.argv = ['node', 'build.js', '--config', site, '--out', out];
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await import(/* @vite-ignore */ `../../tools/build.js?${Math.random()}`);

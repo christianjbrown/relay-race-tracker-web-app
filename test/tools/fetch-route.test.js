@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const repoRoot = path.join(import.meta.dirname, '..', '..');
-const exampleSite = path.join(repoRoot, 'example-site');
+const exampleSite = path.join(repoRoot, 'example-config');
 
 describe('tools/fetch-route.js', () => {
   let dir;
@@ -23,17 +23,17 @@ describe('tools/fetch-route.js', () => {
     dir = await mkdtemp(path.join(os.tmpdir(), 'fetch-route-cli-'));
     const site = path.join(dir, 'site');
     await cp(exampleSite, site, { recursive: true });
-    process.argv = ['node', 'fetch-route.js', '--site', site];
+    process.argv = ['node', 'fetch-route.js', '--config', site];
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.stubGlobal('fetch', vi.fn(async () => ({
       ok: true,
-      json: async () => ({ Tracks: [{ Name: 'Example course', Polylines: ['abc'] }] }),
+      json: async () => ({ Tracks: [{ Name: 'Example course', Polylines: ['_p~iF~ps|U_ulLnnqC'] }] }),
     })));
 
     await import(/* @vite-ignore */ `../../tools/fetch-route.js?${Math.random()}`);
 
     expect(process.exitCode).toBeUndefined();
     const written = JSON.parse(await readFile(path.join(site, 'route.json'), 'utf8'));
-    expect(written).toEqual({ name: 'Example course', polylines: ['abc'] });
+    expect(written).toEqual({ points: [{ lat: 38.5, lng: -120.2 }, { lat: 40.7, lng: -120.95 }] });
   });
 });

@@ -1,5 +1,5 @@
-# Builds site/ and publishes it to GitHub Pages. It does nothing in a
-# repository without a site/ folder, such as the shared project itself.
+# Builds config/ and publishes it to GitHub Pages. It does nothing in a
+# repository without a config/ folder, such as the shared project itself.
 name: Deploy
 
 on:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: site
         run: |
-          if [ -f site/config.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "No site/ folder, so nothing to publish."; fi
+          if [ -f config/config.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "No config/ folder, so nothing to publish."; fi
       - if: steps.site.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:

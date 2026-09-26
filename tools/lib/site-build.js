@@ -3,7 +3,6 @@ import path from 'node:path';
 import { readSchedule } from '../../src/config/schedule-check.js';
 import { readSiteConfig } from '../../src/config/site-config.js';
 import { Course } from '../../src/domain/course.js';
-import { decodePolyline } from '../../src/domain/geo.js';
 import { LegPlacer } from '../../src/domain/leg-placer.js';
 import { Schedule } from '../../src/domain/schedule.js';
 import { localise } from '../../src/i18n/language.js';
@@ -11,6 +10,7 @@ import { escapeHtml } from '../../src/ui/escape-html.js';
 import { cardFacts } from './card-facts.js';
 import { paletteStyle } from './palette-style.js';
 import { fillTemplate, PageHead } from './page-head.js';
+import { publishedRoute, readRoute } from './route-file.js';
 
 const PHOTOS = ['photo.png', 'photo.jpg', 'photo.jpeg', 'photo.webp'];
 
@@ -39,7 +39,7 @@ export class SiteBuild {
     const segments = readSchedule(await read('schedule.json'));
     const route = await this.readRoute(site);
     const schedule = new Schedule(segments);
-    const course = new Course(route.polylines.flatMap(decodePolyline));
+    const course = new Course(route.points);
     new LegPlacer(course).place(schedule);
 
     const sticker = await this.face(site);
@@ -64,7 +64,8 @@ export class SiteBuild {
     // The build owns these two folders outright, so nothing old is left in them.
     await this.files.replace(path.join(this.root, 'src'), path.join(out, 'src'));
     await this.files.clear(path.join(out, 'data'));
-    for (const name of ['config.json', 'schedule.json', 'route.json']) await this.files.copy(path.join(site, name), path.join(out, 'data', name));
+    for (const name of ['config.json', 'schedule.json']) await this.files.copy(path.join(site, name), path.join(out, 'data', name));
+    await this.files.write(path.join(out, 'data', 'route.json'), JSON.stringify(publishedRoute(route)));
     if (await this.files.exists(path.join(site, 'CNAME'))) await this.files.copy(path.join(site, 'CNAME'), path.join(out, 'CNAME'));
     this.log(`Built ${out} for ${config.name}: ${schedule.segments.length} segments, ${Math.round(course.totalKm)} km of course.`);
   }
@@ -87,9 +88,7 @@ export class SiteBuild {
   async readRoute(site) {
     const file = path.join(site, 'route.json');
     if (!(await this.files.exists(file))) throw new Error(`${file} is missing: run "npm run fetch-route" to get the course from Chronorace.`);
-    const route = await this.readJson(file);
-    if (!Array.isArray(route.polylines) || route.polylines.length === 0) throw new Error(`${file} has no "polylines".`);
-    return route;
+    return readRoute(await this.readJson(file), file);
   }
 
   /** The runner's sticker: avatar.png as it is, when the site has one, or one made from photo.*. */

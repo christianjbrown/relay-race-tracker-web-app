@@ -11,7 +11,7 @@ it up for someone they want to follow. That first one still runs on it:
 [where-is-angela.christianbrown.uk](https://where-is-angela.christianbrown.uk),
 from the repository
 [where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk),
-which is a complete real example of a site folder and how it is published. You need a little comfort with a
+which is a complete real example of a config folder and how it is published. You need a little comfort with a
 terminal, a free Google Maps key and somewhere to host a static page. GitHub
 Pages works well and costs nothing.
 
@@ -69,18 +69,18 @@ Otherwise, clone this one and push it somewhere of your own.
 npm ci
 ```
 
-### 2. Start your site folder
+### 2. Start your config folder
 
-Everything about your runner and your event lives in one folder, `site/`. The
-repository ships with a made-up example in `example-site/`. Copy it:
+Everything about your runner and your event lives in one folder, `config/`. The
+repository ships with a made-up example in `example-config/`. Copy it:
 
 ```bash
-cp -r example-site site
+cp -r example-config config
 ```
 
-`site/` is listed in `.gitignore` so that nobody's real details end up in this
+`config/` is listed in `.gitignore` so that nobody's real details end up in this
 shared project by accident. In your own copy you will want to commit it, so
-delete the `/site/` line from `.gitignore`.
+delete the `/config/` line from `.gitignore`.
 
 ### 3. Find the event and the trackers
 
@@ -101,7 +101,7 @@ VAN2  Van 2      TRK-0118       2027-05-15T07:02:07.093Z
 ```
 
 The `Bib` column is what the config calls each tracker. Put the event id and
-the two Bibs in `site/config.json` under `chronorace`.
+the two Bibs in `config/config.json` under `chronorace`.
 
 ### 4. Fetch the course
 
@@ -109,13 +109,16 @@ the two Bibs in `site/config.json` under `chronorace`.
 npm run fetch-route
 ```
 
-This writes `site/route.json` from Chronorace. Commit it, so the page keeps
-working after the event is taken down. If the event has more than one course,
+This writes `config/route.json` from Chronorace: the course as a list of points,
+one per line, `{ "lat": 51.2254, "lng": 2.9186 }`, from start to finish. Commit
+it, so the page keeps working after the event is taken down. You can also
+write or edit it by hand. The build publishes it to the page in Google's
+compact encoded form, which is several times smaller. If the event has more than one course,
 it tells you, and `--track "Name"` picks another.
 
 ### 5. Write the schedule
 
-`site/schedule.json` is your runner's own timeline as a list of segments in
+`config/schedule.json` is your runner's own timeline as a list of segments in
 order, with no gaps. Every moment from the first segment to the last must
 belong to one, so fill any spare time with `free`. Times need their UTC offset,
 for example `"2027-05-15T09:00:00+02:00"`.
@@ -136,14 +139,14 @@ Use the organisers' exact handover points for the `from` and `to` of each leg
 if you can get them. The page uses them to tell when a leg starts and ends,
 and a town centre can be a kilometre or more out.
 
-`example-site/schedule.json` is a complete example to copy from.
+`example-config/schedule.json` is a complete example to copy from.
 
 ### 6. Add the photo
 
-Save it as `site/photo.png` (or `.jpg`, `.jpeg`, `.webp`). The build turns it
+Save it as `config/photo.png` (or `.jpg`, `.jpeg`, `.webp`). The build turns it
 into a round sticker with a white border for the map, the card, the favicon
 and the share card. If you already have a finished sticker, save it as
-`site/avatar.png` instead and it will be used exactly as it is.
+`config/avatar.png` instead and it will be used exactly as it is.
 
 ### 7. Get a Google Maps key
 
@@ -155,16 +158,17 @@ and the share card. If you already have a finished sticker, save it as
    and `http://localhost:8765/*` for trying it out. Under **API restrictions**
    allow only the two APIs above.
 
-The key goes in `site/config.json`. It is not a secret: every visitor's
+The key goes in `config/config.json`. It is not a secret: every visitor's
 browser sends it to Google, which is why the restrictions matter.
 
 ### 8. Fill in the config
 
-`site/config.json`:
+`config/config.json`:
 
 | Setting | What it is |
 |---|---|
 | `name` | The runner's name, as the page should say it. |
+| `title` | The page's title, in the browser tab, link previews and the share card. Default "Where is Sam?" in each language, from `name`. Optional; a string, or one per language. |
 | `emoji` | Their badge while running. Default `🏃`; `🏃‍♀️` and `🚴` also work. |
 | `birthday` | `"MM-DD"`, to wish them happy birthday on the day. Optional. |
 | `vehicle` | `bus`, `van` or `car`: what the page calls the vehicle. Default `bus`. |
@@ -195,11 +199,11 @@ still come live from the trackers, or are estimated from the schedule when
 Chronorace has none.
 
 `npm run build` writes the finished page to `dist/`. Run it again whenever you
-change anything in `site/`.
+change anything in `config/`.
 
 ### 10. Publish it
 
-**With GitHub Actions.** The included `Deploy` workflow builds `site/` and
+**With GitHub Actions.** The included `Deploy` workflow builds `config/` and
 publishes it to GitHub Pages on every push to `main`. In your repository's
 settings under **Pages**, set the source to **GitHub Actions**. Actions minutes
 are free for public repositories, and private ones get a monthly allowance.
@@ -209,9 +213,9 @@ are free for public repositories, and private ones get a monthly allowance.
 `docs` folder of `main`.
 
 **Keeping your site apart from this code.** Instead of copying this
-repository, you can keep a repository of your own that holds just `site/`,
+repository, you can keep a repository of your own that holds just `config/`,
 with this one added as a git submodule called `engine`, and a workflow that
-runs `node engine/tools/build.js --site site --out dist` and publishes
+runs `node engine/tools/build.js --config config --out dist` and publishes
 `dist`. Nothing built is committed, and taking a newer version is a
 submodule update. [where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk)
 is set up this way; copy its
@@ -223,7 +227,7 @@ repository's Pages settings, then add the DNS records GitHub's
 [custom domain guide](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
 gives: `A` and `AAAA` records for a whole domain, or a `CNAME` pointing at
 `<your-user>.github.io` for a subdomain. When publishing from a branch, also
-put a file named `CNAME` holding just the domain in `site/`, and the build
+put a file named `CNAME` holding just the domain in `config/`, and the build
 copies it. Either way, make `site.url` in the config match.
 
 ## Page options
@@ -266,7 +270,7 @@ minutes old is shown as possibly off.
 
 ## Tuning
 
-Every threshold above can be changed under `tuning` in `site/config.json`, in
+Every threshold above can be changed under `tuning` in `config/config.json`, in
 the units its name gives. The defaults are the values that worked on a real
 relay, and each is explained in [`src/config/tuning.js`](src/config/tuning.js).
 

@@ -25,6 +25,7 @@ import { Formats } from './i18n/formats.js';
 import { localise, pickLanguage, preferredLanguages } from './i18n/language.js';
 import { LOCALES } from './i18n/locales/index.js';
 import { SegmentDescriber } from './i18n/segment-describer.js';
+import { siteWords } from './i18n/site-words.js';
 import { CourseLayer } from './maps/google/course-layer.js';
 import { GoogleDirections } from './maps/google/directions.js';
 import { loadGoogleMaps } from './maps/google/loader.js';
@@ -98,7 +99,7 @@ function buildCard(els, page) {
 function speak(win, config) {
   const code = pickLanguage(preferredLanguages(win.location.search, win.navigator), config.languages);
   const locale = LOCALES[code];
-  const words = locale.words({ name: config.name, vehicle: config.vehicle });
+  const words = siteWords(LOCALES, config, code);
   return { code, locale, words, formats: new Formats(locale.tag, config.timezone, words) };
 }
 

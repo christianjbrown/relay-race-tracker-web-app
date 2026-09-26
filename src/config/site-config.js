@@ -46,6 +46,7 @@ export function readSiteConfig(raw, languages) {
   const c = raw ?? {};
   need(isString(c.name), '"name" is the runner\'s name, and is required.');
   need(typeof c.timezone === 'string' && validTimeZone(c.timezone), '"timezone" must be an IANA time zone, such as "Europe/Brussels".');
+  need(c.title == null || isText(c.title), '"title", when given, must be text or one text per language.');
   need(isText(c.event?.name), '"event.name" is required.');
   need(isText(c.event?.from), '"event.from", where the relay starts, is required.');
   need(isText(c.event?.to), '"event.to", where the relay finishes, is required.');
@@ -73,6 +74,7 @@ export function readSiteConfig(raw, languages) {
 
   return Object.freeze({
     name: c.name,
+    title: c.title ?? null,
     emoji: c.emoji ?? '🏃',
     birthday: c.birthday || null,
     vehicle,

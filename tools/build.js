@@ -1,4 +1,4 @@
-// npm run build [-- --site site --out dist]
+// npm run build [-- --config config --out dist]
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LOCALES } from '../src/i18n/locales/index.js';
@@ -18,7 +18,7 @@ const build = new SiteBuild({
   log: processIo.log,
 });
 
-await runCli((o) => build.run(o), process.argv.slice(2), {
-  site: { type: 'string', default: 'site' },
+await runCli((o) => build.run({ site: o.config, out: o.out }), process.argv.slice(2), {
+  config: { type: 'string', default: 'config' },
   out: { type: 'string', default: 'dist' },
 }, processIo);

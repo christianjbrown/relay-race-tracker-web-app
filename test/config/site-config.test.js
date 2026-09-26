@@ -26,6 +26,7 @@ describe('readSiteConfig', () => {
     expect(c).toMatchObject({ emoji: '🏃', birthday: null, vehicle: 'bus', languages: ['en'], site: { url: 'https://www.example.com/', indexable: false } });
     expect(c.tuning.jogKmh).toBe(9);
     expect(c.colours.run).toBe('#EB6834');
+    expect(c.title).toBeNull();
     expect(Object.isFrozen(c)).toBe(true);
   });
 
@@ -66,6 +67,8 @@ describe('readSiteConfig', () => {
     expect(problems({ ...valid(), birthday: '9-25' })[0]).toMatch(/"birthday"/);
     expect(problems({ ...valid(), tuning: { nope: 1 } })[0]).toMatch(/Unknown tuning/);
     expect(problems({ ...valid(), colours: { run: 'red' } })[0]).toMatch(/Colour run/);
+    expect(problems({ ...valid(), title: '' })[0]).toMatch(/"title"/);
+    expect(readSiteConfig({ ...valid(), title: { en: 'Sam live', de: 'Sam live' } }, ['en', 'de']).title).toEqual({ en: 'Sam live', de: 'Sam live' });
   });
 
   it('says what to fix in its message', () => {
