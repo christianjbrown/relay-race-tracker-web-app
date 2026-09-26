@@ -53,7 +53,7 @@ export default {
       stale: 'Tracker evtl. aus',
       noFix: 'Noch keine GPS-Position',
       retrying: 'Die Karte hat nicht geladen – neuer Versuch …',
-      estimated: 'Tracker nicht erreichbar – Position anhand des Zeitplans geschätzt',
+      estimated: 'Chronorace gerade nicht erreichbar – Position anhand des Zeitplans geschätzt',
       follow: `${name} folgen`,
       overview: 'Ganze Strecke',
       schedule: 'Zeitplan',
