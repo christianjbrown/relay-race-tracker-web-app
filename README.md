@@ -15,7 +15,10 @@ It is not affiliated with Chronorace or Google. It reads the same live
 tracking feed that Chronorace's own tracking page reads, which is not a
 documented API and could change.
 
-![The example page: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with the card showing time left and what comes next](docs/screenshot.png)
+<p>
+  <img src="docs/screenshot-desktop.png" width="72%" alt="The example page on a computer: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with 15 km to go and live GPS">
+  <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam on the bus to the team hotel, arriving in about 9 minutes">
+</p>
 
 **Ask first.** This page shows a real person's live location to anyone with
 the link. Make sure the runner is happy with that, and leave `site.indexable`
