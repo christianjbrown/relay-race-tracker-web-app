@@ -194,10 +194,13 @@ export async function boot(win, state = {}) {
   const controls = new ViewControls(els, view, surface, win);
   controls.bind();
 
-  await app.poll();
+  // Drawn at once from the timeline; the trackers fill in when Chronorace
+  // answers, however long that takes.
+  app.render();
   view.showWholeRoute();
   controls.watchCard();
   app.run();
+  await app.poll();
   return app;
 }
 
