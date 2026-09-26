@@ -15,6 +15,8 @@ It is not affiliated with Chronorace or Google. It reads the same live
 tracking feed that Chronorace's own tracking page reads, which is not a
 documented API and could change.
 
+![The example page: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with the card showing time left and what comes next](docs/screenshot.png)
+
 **Ask first.** This page shows a real person's live location to anyone with
 the link. Make sure the runner is happy with that, and leave `site.indexable`
 off (the default) unless they want the page to turn up in search engines.
