@@ -48,6 +48,8 @@ prefers from the languages you choose.
   but any photo works.
 - A Google Maps API key (see below).
 - [Node.js](https://nodejs.org) 20 or newer.
+- Optionally, a domain of your own. Without one the page is published at
+  `https://<your-user>.github.io/<repo>/`, which works just as well.
 
 ## Set it up
 
