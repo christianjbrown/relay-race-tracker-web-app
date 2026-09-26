@@ -7,7 +7,11 @@ resting at a hotel or waiting to take over. It also says what comes next and
 roughly when.
 
 It was built for one runner in one relay, then made general so anyone can set
-it up for someone they want to follow. You need a little comfort with a
+it up for someone they want to follow. That first one still runs on it:
+[where-is-angela.christianbrown.uk](https://where-is-angela.christianbrown.uk),
+from the repository
+[where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk),
+which is a complete real example of a site folder and how it is published. You need a little comfort with a
 terminal, a free Google Maps key and somewhere to host a static page. GitHub
 Pages works well and costs nothing.
 
@@ -203,6 +207,15 @@ are free for public repositories, and private ones get a monthly allowance.
 **From a branch.** If you would rather not use Actions, build with
 `npm run build -- --out docs`, commit `docs/`, and set Pages to publish the
 `docs` folder of `main`.
+
+**Keeping your site apart from this code.** Instead of copying this
+repository, you can keep a repository of your own that holds just `site/`,
+with this one added as a git submodule, and build into its root with
+`node engine/tools/build.js --site site --out .`. Taking a newer version is
+then a submodule update and a rebuild.
+[where-is-angela.christianbrown.uk](https://github.com/christianjbrown/where-is-angela.christianbrown.uk)
+is set up this way, publishing from its branch with a `build.sh` that does it
+all.
 
 **On your own domain.** Any domain works, whether a whole domain such as
 `example.com` or a subdomain of one you already have. Set it in the
