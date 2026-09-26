@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { CHRONORACE_API, ChronoraceFeed } from '../../src/services/chronorace-feed.js';
+import { CHRONORACE_API, ChronoraceFeed, REQUEST_TIMEOUT_MS } from '../../src/services/chronorace-feed.js';
 
 const answer = (body, status = 200) => Promise.resolve({ ok: status < 400, status, json: () => Promise.resolve(body) });
 
@@ -8,7 +8,7 @@ describe('ChronoraceFeed', () => {
     const http = vi.fn(() => answer({ Trackers: { x: { Bib: 'RUN', DeviceId: 'd1' }, y: { Bib: 'VAN1', DeviceId: 'd2' } } }));
     const feed = new ChronoraceFeed('123', http);
     expect(await feed.devicesByBib()).toEqual({ RUN: 'd1', VAN1: 'd2' });
-    expect(http).toHaveBeenCalledWith(`${CHRONORACE_API}/config/123`, { cache: 'no-store' });
+    expect(http).toHaveBeenCalledWith(`${CHRONORACE_API}/config/123`, { cache: 'no-store', signal: expect.any(AbortSignal) });
   });
 
   it('copes with an event with no trackers', async () => {
@@ -21,12 +21,23 @@ describe('ChronoraceFeed', () => {
       d2: { Lat: 51, Lon: 5, Time: '2027-05-15T10:00:00+02:00' },
     }));
     const fixes = await new ChronoraceFeed('9', http, 'https://api.test').positions();
-    expect(http).toHaveBeenCalledWith('https://api.test/get/9', { cache: 'no-store' });
+    expect(http).toHaveBeenCalledWith('https://api.test/get/9', { cache: 'no-store', signal: expect.any(AbortSignal) });
     expect(fixes.d1).toEqual({ lat: 50.1, lng: 4.2, time: new Date('2027-05-15T08:00:00Z') });
     expect(fixes.d2.time).toEqual(new Date('2027-05-15T08:00:00Z'));
   });
 
   it('fails on an error answer', async () => {
     await expect(new ChronoraceFeed('9', () => answer(null, 500), 'https://api.test').config()).rejects.toThrow('https://api.test/config/9 answered 500');
+  });
+
+  it('gives up on a request that does not answer in time', async () => {
+    // Answers only by failing when its signal aborts, as a hung request would.
+    const hung = (url, { signal }) => new Promise((_, reject) => signal.addEventListener('abort', () => reject(signal.reason)));
+    await expect(new ChronoraceFeed('9', hung, 'https://api.test', 20).config()).rejects.toThrow(/timed out|abort/i);
+  });
+
+  it('waits ten seconds by default', () => {
+    expect(REQUEST_TIMEOUT_MS).toBe(10000);
+    expect(new ChronoraceFeed('9', () => {}).timeoutMs).toBe(10000);
   });
 });

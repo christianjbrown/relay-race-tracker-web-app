@@ -161,6 +161,20 @@ describe('boot', () => {
     expect(document.documentElement.dataset.theme).toBe('dark');
   });
 
+  it('draws the route straight away, even when Chronorace never answers', async () => {
+    const answered = makeFetch();
+    // Chronorace hangs; the site's own files still arrive.
+    const fetch = vi.fn((url) => (String(url).includes('/api/gps/') ? new Promise(() => {}) : answered(url)));
+    const win = makeWin({ search: '?at=2027-05-15T14:00', fetch });
+    boot(win);
+    const maps = await completeMapLoad(win);
+
+    // The legs and drives are drawn, beyond the course line itself.
+    expect(maps.made.polylines.length).toBeGreaterThan(1);
+    expect(document.getElementById('headline').textContent).toContain('Sam');
+    expect(document.getElementById('meta').textContent).toBe('No GPS position yet');
+  });
+
   it('picks the light theme from the query string', async () => {
     const win = makeWin({ search: '?theme=light' });
     const bootPromise = boot(win);
