@@ -6,7 +6,7 @@ const valid = () => ({
   timezone: 'Europe/Brussels',
   event: { name: 'Relay', from: 'Ostend', to: { en: 'Brussels', de: 'Brüssel' } },
   chronorace: { eventId: '42', runnerTracker: 'RUN', vehicleTracker: 'VAN1' },
-  site: { url: 'https://example.com/sam' },
+  site: { url: 'https://www.example.com/' },
   mapsApiKey: 'key',
 });
 
@@ -23,7 +23,7 @@ const problems = (raw) => {
 describe('readSiteConfig', () => {
   it('fills in the defaults', () => {
     const c = readSiteConfig(valid(), ['en', 'de']);
-    expect(c).toMatchObject({ emoji: '🏃', birthday: null, vehicle: 'bus', languages: ['en'], site: { url: 'https://example.com/sam', indexable: false } });
+    expect(c).toMatchObject({ emoji: '🏃', birthday: null, vehicle: 'bus', languages: ['en'], site: { url: 'https://www.example.com/', indexable: false } });
     expect(c.tuning.jogKmh).toBe(9);
     expect(Object.isFrozen(c)).toBe(true);
   });

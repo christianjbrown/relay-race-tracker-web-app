@@ -46,7 +46,7 @@ describe('SiteBuild', () => {
 
     const html = await readFile(path.join(out, 'index.html'), 'utf8');
     expect(html).toContain('<title>Where is Sam? · Wo ist Sam? – Example Coast Relay 2027</title>');
-    expect(html).toContain('<link rel="canonical" href="https://example.com/where-is-sam/">');
+    expect(html).toContain('<link rel="canonical" href="https://www.example.com/">');
     expect(html).toContain('hreflang="en"');
     expect(html).toContain('hreflang="de"');
     expect(html).toContain('name="robots" content="noindex"');
