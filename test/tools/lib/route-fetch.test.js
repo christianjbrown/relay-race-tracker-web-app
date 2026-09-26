@@ -35,7 +35,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, log);
     await rf.run({ site: 'site' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute('A', decodePolyline(A)));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute(decodePolyline(A)));
     expect(log).toHaveBeenCalledWith(expect.stringContaining('2 courses (A, B)'));
   });
 
@@ -45,7 +45,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, vi.fn());
     await rf.run({ site: 'site', track: 'B' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute('B', decodePolyline(B)));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute(decodePolyline(B)));
   });
 
   it('picks a track by index', async () => {
@@ -54,7 +54,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, vi.fn());
     await rf.run({ site: 'site', track: '1' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute('B', decodePolyline(B)));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', formatRoute(decodePolyline(B)));
   });
 
   it('throws for an unknown track', async () => {

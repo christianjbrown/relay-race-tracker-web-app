@@ -34,6 +34,6 @@ describe('tools/fetch-route.js', () => {
 
     expect(process.exitCode).toBeUndefined();
     const written = JSON.parse(await readFile(path.join(site, 'route.json'), 'utf8'));
-    expect(written).toEqual({ name: 'Example course', points: [{ lat: 38.5, lng: -120.2 }, { lat: 40.7, lng: -120.95 }] });
+    expect(written).toEqual({ points: [{ lat: 38.5, lng: -120.2 }, { lat: 40.7, lng: -120.95 }] });
   });
 });

@@ -26,7 +26,7 @@ export class RouteFetch {
     if (tracks.length > 1 && track == null) this.log(`The event has ${tracks.length} courses (${tracks.map((t) => t.Name).join(', ')}); using the first. Choose another with --track.`);
     const file = path.join(site, 'route.json');
     // Decoded to plain positions, so the file can be read; the build encodes them again for the page.
-    await this.files.write(file, formatRoute(chosen.Name, chosen.Polylines.flatMap(decodePolyline)));
+    await this.files.write(file, formatRoute(chosen.Polylines.flatMap(decodePolyline)));
     this.log(`Wrote ${file}: ${chosen.Name}.`);
   }
 }

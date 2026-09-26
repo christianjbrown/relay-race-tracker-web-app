@@ -6,16 +6,17 @@ const points = [{ lat: 51.2254, lng: 2.9186 }, { lat: -33.86785, lng: 151.20732 
 
 describe('formatRoute', () => {
   it('writes one point per line, and reads back as the same route', () => {
-    const text = formatRoute('Course "A"', points);
-    expect(text).toBe('{\n  "name": "Course \\"A\\"",\n  "points": [\n    { "lat": 51.2254, "lng": 2.9186 },\n    { "lat": -33.86785, "lng": 151.20732 }\n  ]\n}\n');
-    expect(JSON.parse(text)).toEqual({ name: 'Course "A"', points });
+    const text = formatRoute(points);
+    expect(text).toBe('{\n  "points": [\n    { "lat": 51.2254, "lng": 2.9186 },\n    { "lat": -33.86785, "lng": 151.20732 }\n  ]\n}\n');
+    expect(JSON.parse(text)).toEqual({ points });
   });
 });
 
 describe('readRoute', () => {
-  it('gives back the name and points', () => {
-    expect(readRoute({ name: 'A', points }, 'r.json')).toEqual({ name: 'A', points });
-    expect(readRoute({ points }, 'r.json').name).toBe('');
+  it('gives back the points', () => {
+    expect(readRoute({ points }, 'r.json')).toEqual({ points });
+    // Anything else in the file, such as an old course name, is ignored.
+    expect(readRoute({ name: 'Ingfit.xml', points }, 'r.json')).toEqual({ points });
   });
 
   it('needs at least two points', () => {
@@ -34,8 +35,8 @@ describe('readRoute', () => {
 
 describe('publishedRoute', () => {
   it('encodes the points as one polyline that decodes back to them', () => {
-    const published = publishedRoute({ name: 'A', points });
-    expect(published.name).toBe('A');
+    const published = publishedRoute({ points });
+    expect(Object.keys(published)).toEqual(['polylines']);
     expect(decodePolyline(published.polylines[0])).toEqual(points);
   });
 });

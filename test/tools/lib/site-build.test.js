@@ -71,7 +71,6 @@ describe('SiteBuild', () => {
     // Published encoded, and decoding it gives back the site's points.
     const published = JSON.parse(await readFile(path.join(out, 'data', 'route.json'), 'utf8'));
     const source = JSON.parse(await readFile(path.join(site, 'route.json'), 'utf8'));
-    expect(published.name).toBe('Example course');
     expect(published.polylines).toHaveLength(1);
     expect(decodePolyline(published.polylines[0])).toEqual(source.points);
     await readFile(path.join(out, 'style.css'), 'utf8');
