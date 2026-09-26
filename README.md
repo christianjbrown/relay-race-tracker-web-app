@@ -1,5 +1,11 @@
 # 🏃 Relay Race Tracker 🚌
 
+[![CI](https://github.com/christianjbrown/relay-race-tracker-web-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/christianjbrown/relay-race-tracker-web-app/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/christianjbrown/relay-race-tracker-web-app/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/christianjbrown/relay-race-tracker-web-app/security/code-scanning)
+[![Coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen)](#-development)
+[![Node 20, 22, 24](https://img.shields.io/badge/node-20%20%7C%2022%20%7C%2024-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Licence: MIT](https://img.shields.io/github/license/christianjbrown/relay-race-tracker-web-app)](LICENSE)
+
 > Where's your runner right now? On a leg, on the bus, or fast asleep in a hotel? 🗺️
 
 A web page for following one person through a multi-leg relay race that
