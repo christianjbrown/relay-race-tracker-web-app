@@ -277,11 +277,14 @@ relay, and each is explained in [`src/config/tuning.js`](src/config/tuning.js).
 ## Development
 
 ```bash
+npm run lint    # ESLint
 npm test        # unit tests, with 100% coverage required
-npm run ci      # the tests, then a build of the example site
+npm run ci      # lint, the tests, then a build of the example site
 ```
 
-`npm run ci` is what continuous integration runs. The repository also has a
+Continuous integration runs the same checks on Node 20, 22 and 24, and a pull
+request can only be merged once they pass. GitHub's CodeQL scanning also
+checks every change. The repository also has a
 pre-push hook in `.githooks/` that runs it. Turn it on with
 `git config core.hooksPath .githooks`.
 
