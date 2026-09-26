@@ -5,16 +5,16 @@
       "end": "2027-05-15T10:30:00+02:00",
       "kind": "run",
       "leg": 1,
-      "km": 13,
+      "km": 25,
       "from": {
         "name": "Ostend",
         "lat": 51.2254,
         "lng": 2.9186
       },
       "to": {
-        "name": "Jabbeke",
-        "lat": 51.1826,
-        "lng": 3.087
+        "name": "Bruges",
+        "lat": 51.2093,
+        "lng": 3.2247
       }
     },
     {
@@ -22,9 +22,9 @@
       "end": "2027-05-15T11:15:00+02:00",
       "kind": "drive",
       "from": {
-        "name": "Jabbeke",
-        "lat": 51.1826,
-        "lng": 3.087
+        "name": "Bruges",
+        "lat": 51.2093,
+        "lng": 3.2247
       },
       "to": {
         "name": "Aalter",
@@ -47,7 +47,7 @@
       "end": "2027-05-15T15:00:00+02:00",
       "kind": "run",
       "leg": 2,
-      "km": 19.5,
+      "km": 34.5,
       "from": {
         "name": "Aalter",
         "lat": 51.087,
@@ -110,16 +110,16 @@
       "end": "2027-05-16T11:30:00+02:00",
       "kind": "run",
       "leg": 3,
-      "km": 20,
+      "km": 33.5,
       "from": {
         "name": "Aalst",
         "lat": 50.9378,
         "lng": 4.0403
       },
       "to": {
-        "name": "Anderlecht",
-        "lat": 50.86245,
-        "lng": 4.2999
+        "name": "Dilbeek",
+        "lat": 50.848,
+        "lng": 4.26
       }
     },
     {
@@ -128,8 +128,8 @@
       "kind": "free",
       "at": {
         "name": "Meeting point",
-        "lat": 50.8552,
-        "lng": 4.32557
+        "lat": 50.84635,
+        "lng": 4.31511
       }
     },
     {
@@ -139,8 +139,8 @@
       "finish": true,
       "from": {
         "name": "Meeting point",
-        "lat": 50.8552,
-        "lng": 4.32557
+        "lat": 50.84635,
+        "lng": 4.31511
       },
       "to": {
         "name": {

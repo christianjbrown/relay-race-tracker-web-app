@@ -9,6 +9,7 @@ import { Schedule } from '../../src/domain/schedule.js';
 import { localise } from '../../src/i18n/language.js';
 import { escapeHtml } from '../../src/ui/escape-html.js';
 import { cardFacts } from './card-facts.js';
+import { paletteStyle } from './palette-style.js';
 import { fillTemplate, PageHead } from './page-head.js';
 
 const PHOTOS = ['photo.png', 'photo.jpg', 'photo.jpeg', 'photo.webp'];
@@ -43,7 +44,7 @@ export class SiteBuild {
 
     const sticker = await this.face(site);
     for (const [name, png] of Object.entries(this.images.icons.make(sticker))) await this.files.write(path.join(out, name), png);
-    const card = this.images.card.draw({ facts: cardFacts(config, schedule, course, this.locales), course, schedule, avatar: sticker });
+    const card = this.images.card.draw({ facts: cardFacts(config, schedule, course, this.locales), course, schedule, avatar: sticker, colours: config.colours });
     await this.files.write(path.join(out, 'og-card.png'), card);
 
     const head = new PageHead(config, segments, this.locales);
@@ -52,6 +53,7 @@ export class SiteBuild {
     await this.files.write(path.join(out, 'index.html'), fillTemplate(template, {
       lang: head.first.locale.tag,
       head: head.render(version),
+      palette: paletteStyle(config.colours),
       headline: escapeHtml(head.first.words.title),
       detail: escapeHtml(localise(config.event.name, head.first.code)),
     }));

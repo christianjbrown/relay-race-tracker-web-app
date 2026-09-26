@@ -1,3 +1,5 @@
+import { DEFAULT_COLOURS } from '../../src/config/colours.js';
+
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 630;
 
@@ -9,8 +11,6 @@ const BG = '#f4f1ec';
 const INK = '#221f1c';
 const SOFT = '#6b665f';
 const COURSE = '#cecac3';
-const RUN = '#eb6834';
-const SLEEP = '#5f4d8c';
 
 /**
  * The 1200x630 picture a shared link shows, drawn from the same data the
@@ -26,8 +26,8 @@ export class OgCard {
     this.canvas = canvas;
   }
 
-  /** `facts` from cardFacts; `course` a Course; `schedule` with its legs placed; `avatar` an image. Returns a PNG. */
-  draw({ facts, course, schedule, avatar }) {
+  /** `facts` from cardFacts; `course` a Course; `schedule` with its legs placed; `avatar` an image; `colours` the site's. Returns a PNG. */
+  draw({ facts, course, schedule, avatar, colours = DEFAULT_COLOURS }) {
     const out = this.canvas.createCanvas(W * SCALE, H * SCALE);
     const ctx = out.getContext('2d');
     ctx.scale(SCALE, SCALE);
@@ -35,14 +35,14 @@ export class OgCard {
     ctx.fillRect(0, 0, W, H);
     // Faded, so it reads as the setting and the words in front of it lead.
     ctx.globalAlpha = 0.5;
-    ctx.drawImage(this.route(course, schedule), 0, 0, W, H);
+    ctx.drawImage(this.route(course, schedule, colours), 0, 0, W, H);
     ctx.globalAlpha = 1;
 
     ctx.drawImage(avatar, W / 2 - 100, 72, 200, 200);
     const { regular, bold } = this.canvas.fonts;
     this.centred(ctx, 284, facts.title, bold, 56, INK);
     if (facts.subtitle) this.centred(ctx, 352, facts.subtitle, bold, 36, SOFT);
-    this.centred(ctx, 412, facts.event, bold, 28, RUN);
+    this.centred(ctx, 412, facts.event, bold, 28, colours.accent);
     this.centred(ctx, 456, facts.route, regular, 22, SOFT);
 
     const left = SQUARE[0] / 2;
@@ -56,7 +56,7 @@ export class OgCard {
   }
 
   /** The course, the runner's legs on it, the rest stops, and the two ends, filling the card's height. */
-  route(course, schedule) {
+  route(course, schedule, colours) {
     const layer = this.canvas.createCanvas(W * SCALE, H * SCALE);
     const ctx = layer.getContext('2d');
     ctx.scale(SCALE, SCALE);
@@ -83,9 +83,9 @@ export class OgCard {
     };
     line(course.points, COURSE, 8);
     for (const seg of schedule.segments) {
-      if (seg.kind === 'run' && !seg.finish) line(course.slice(...seg.span), RUN, 12);
+      if (seg.kind === 'run' && !seg.finish) line(course.slice(...seg.span), colours.run, 12);
     }
-    for (const seg of schedule.segments) if (seg.kind === 'sleep') dot(seg.at, 9, SLEEP);
+    for (const seg of schedule.segments) if (seg.kind === 'sleep') dot(seg.at, 9, colours.sleep);
     dot(course.points[0], 11, BG, INK);
     dot(course.points[course.points.length - 1], 11, BG, INK);
     return layer;

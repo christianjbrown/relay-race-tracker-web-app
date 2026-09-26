@@ -1,3 +1,4 @@
+import { resolveColours } from './colours.js';
 import { resolveTuning } from './tuning.js';
 
 const VEHICLES = ['bus', 'van', 'car'];
@@ -58,12 +59,16 @@ export function readSiteConfig(raw, languages) {
   const langs = c.languages ?? ['en'];
   need(Array.isArray(langs) && langs.length > 0 && langs.every((l) => languages.includes(l)), `"languages" must list one or more of ${languages.join(', ')}.`);
   need(c.birthday == null || c.birthday === '' || /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(c.birthday), '"birthday" must be MM-DD, or left out.');
-  let tuning = null;
-  try {
-    tuning = resolveTuning(c.tuning);
-  } catch (e) {
-    problems.push(e.message);
-  }
+  const attempt = (fn) => {
+    try {
+      return fn();
+    } catch (e) {
+      problems.push(e.message);
+      return null;
+    }
+  };
+  const tuning = attempt(() => resolveTuning(c.tuning));
+  const colours = attempt(() => resolveColours(c.colours));
   if (problems.length) throw new ConfigError(problems);
 
   return Object.freeze({
@@ -78,5 +83,6 @@ export function readSiteConfig(raw, languages) {
     site: { url: new URL(c.site.url).href, indexable: c.site.indexable === true },
     mapsApiKey: c.mapsApiKey,
     tuning,
+    colours,
   });
 }

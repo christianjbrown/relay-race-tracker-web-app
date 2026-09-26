@@ -1,13 +1,16 @@
+import { resolveColours } from '../../src/config/colours.js';
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { NextView } from '../../src/ui/next-view.js';
 import { Elements } from '../../src/ui/dom.js';
 import { makeBadges } from '../../src/ui/badges.js';
-import { COLOURS } from '../../src/ui/theme.js';
 import { LOCALES } from '../../src/i18n/locales/index.js';
 import { Formats } from '../../src/i18n/formats.js';
 import { SegmentDescriber } from '../../src/i18n/segment-describer.js';
 import { makeRelay, at } from '../fixtures/relay.js';
+
+// A palette of the site's own, to show the views use what they are given.
+const COLOURS = resolveColours({ run: '#123456', drive: '#234567', sleep: '#345678', free: '#456789' });
 
 function makeView() {
   document.body.innerHTML = '<p id="next" hidden></p>';
@@ -17,7 +20,7 @@ function makeView() {
   const badges = makeBadges('🏃', 'bus');
   const { schedule, states } = makeRelay();
   const describer = new SegmentDescriber(words, formats, 'en');
-  return { view: new NextView(els, words, formats, badges, describer, schedule), els, words, badges, schedule, states };
+  return { view: new NextView(els, words, formats, badges, describer, schedule, COLOURS), els, words, badges, schedule, states };
 }
 
 describe('NextView', () => {

@@ -1,9 +1,13 @@
+import { resolveColours } from '../../src/config/colours.js';
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { CardLabels } from '../../src/ui/card-labels.js';
 import { Elements } from '../../src/ui/dom.js';
-import { COLOURS, KINDS, THEMES } from '../../src/ui/theme.js';
+import { KINDS, THEMES } from '../../src/ui/theme.js';
 import { LOCALES } from '../../src/i18n/locales/index.js';
+
+// A palette of the site's own, to show the views use what they are given.
+const COLOURS = resolveColours({ run: '#123456', drive: '#234567', sleep: '#345678', free: '#456789' });
 
 function cardHtml() {
   return `
@@ -22,7 +26,7 @@ describe('CardLabels', () => {
     document.body.innerHTML = cardHtml();
     const els = new Elements(document);
     const words = LOCALES.en.words({ name: 'Sam', vehicle: 'bus' });
-    const labels = new CardLabels(els, words, 'en', THEMES.dark);
+    const labels = new CardLabels(els, words, 'en', THEMES.dark, COLOURS);
     labels.render();
 
     expect(document.documentElement.lang).toBe('en');

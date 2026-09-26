@@ -25,13 +25,15 @@ describe('readSiteConfig', () => {
     const c = readSiteConfig(valid(), ['en', 'de']);
     expect(c).toMatchObject({ emoji: '🏃', birthday: null, vehicle: 'bus', languages: ['en'], site: { url: 'https://www.example.com/', indexable: false } });
     expect(c.tuning.jogKmh).toBe(9);
+    expect(c.colours.run).toBe('#EB6834');
     expect(Object.isFrozen(c)).toBe(true);
   });
 
   it('keeps what is given', () => {
-    const c = readSiteConfig({ ...valid(), emoji: '🚴', birthday: '09-25', vehicle: 'van', languages: ['de', 'en'], site: { url: 'http://x.test/', indexable: true }, tuning: { jogKmh: 10 } }, ['en', 'de']);
+    const c = readSiteConfig({ ...valid(), emoji: '🚴', birthday: '09-25', vehicle: 'van', languages: ['de', 'en'], site: { url: 'http://x.test/', indexable: true }, tuning: { jogKmh: 10 }, colours: { sleep: '#000000' } }, ['en', 'de']);
     expect(c).toMatchObject({ emoji: '🚴', birthday: '09-25', vehicle: 'van', languages: ['de', 'en'], site: { indexable: true } });
     expect(c.tuning.jogKmh).toBe(10);
+    expect(c.colours.sleep).toBe('#000000');
   });
 
   it('treats an empty birthday as none', () => {
@@ -63,6 +65,7 @@ describe('readSiteConfig', () => {
     expect(problems({ ...valid(), languages: ['fr'] })[0]).toMatch(/"languages"/);
     expect(problems({ ...valid(), birthday: '9-25' })[0]).toMatch(/"birthday"/);
     expect(problems({ ...valid(), tuning: { nope: 1 } })[0]).toMatch(/Unknown tuning/);
+    expect(problems({ ...valid(), colours: { run: 'red' } })[0]).toMatch(/Colour run/);
   });
 
   it('says what to fix in its message', () => {

@@ -3,6 +3,7 @@
   --drive: #E87BA4;
   --sleep: #5F4D8C;
   --free: #A9A79C;
+  --accent: var(--run);
 
   /* Dark for everyone, to sit on the dark map. */
   --bg: #161412;
@@ -227,7 +228,7 @@ h1 {
   font-size: 0.9rem;
   border: 0;
   border-radius: 12px;
-  background: var(--run);
+  background: var(--accent);
   color: #fff;
   font: inherit;
   font-weight: 600;

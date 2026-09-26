@@ -15,7 +15,10 @@ It is not affiliated with Chronorace or Google. It reads the same live
 tracking feed that Chronorace's own tracking page reads, which is not a
 documented API and could change.
 
-![The example page: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with the card showing time left and what comes next](docs/screenshot.png)
+<p>
+  <img src="docs/screenshot-desktop.png" width="72%" alt="The example page on a computer: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with 15 km to go and live GPS">
+  <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam on the bus to the team hotel, arriving in about 9 minutes">
+</p>
 
 **Ask first.** This page shows a real person's live location to anyone with
 the link. Make sure the runner is happy with that, and leave `site.indexable`
@@ -48,6 +51,8 @@ prefers from the languages you choose.
   but any photo works.
 - A Google Maps API key (see below).
 - [Node.js](https://nodejs.org) 20 or newer.
+- Optionally, a domain of your own. Without one the page is published at
+  `https://<your-user>.github.io/<repo>/`, which works just as well.
 
 ## Set it up
 
@@ -167,6 +172,7 @@ browser sends it to Google, which is why the restrictions matter.
 | `site.url` | The full address the page will be published at, ending in `/`, such as `https://www.example.com/` or `https://<your-user>.github.io/<repo>/`. Link previews need it. |
 | `site.indexable` | `true` to let search engines list the page. Default `false`. |
 | `mapsApiKey` | The key from step 7. |
+| `colours` | Optional. Your own colours as `"#rrggbb"`: `run`, `drive`, `sleep` and `free` for each kind of segment on the map, the card and the share card, and `accent` for the main button, which follows `run` unless given. |
 | `tuning` | Optional. See [Tuning](#tuning). |
 
 The build checks all of this and lists anything that is missing or wrong.

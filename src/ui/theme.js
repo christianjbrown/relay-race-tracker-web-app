@@ -1,6 +1,3 @@
-/** One colour per kind of segment, used on the map, the card and the legend. */
-export const COLOURS = Object.freeze({ run: '#EB6834', drive: '#E87BA4', sleep: '#5F4D8C', free: '#A9A79C' });
-
 export const KINDS = Object.freeze(['run', 'drive', 'sleep', 'free']);
 
 /** What changes with the map's theme: the halo under each line, the course, and an empty dot. */
