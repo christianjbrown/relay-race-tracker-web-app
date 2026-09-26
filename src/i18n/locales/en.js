@@ -1,0 +1,71 @@
+const VEHICLES = {
+  bus: { noun: 'Bus', aboard: 'on the bus' },
+  van: { noun: 'Van', aboard: 'in the van' },
+  car: { noun: 'Car', aboard: 'in the car' },
+};
+
+/** British English. Every string that names somebody takes the name it is given. */
+export default {
+  code: 'en',
+  tag: 'en-GB',
+  region: 'GB',
+  ogLocale: 'en_GB',
+  vehicles: Object.keys(VEHICLES),
+  words({ name, vehicle }) {
+    const v = VEHICLES[vehicle];
+    const possessive = `${name}’s`;
+    return {
+      title: `Where is ${name}?`,
+      birthday: `Happy birthday, ${name}!`,
+      kinds: { run: 'Running/Cycling', drive: 'Driving', sleep: 'Resting', free: 'Free time' },
+      course: 'Rest of the course',
+      planned: 'Dashed: still to come',
+      headline: {
+        run: `${possessive} turn`,
+        drive: `${name} is ${v.aboard}`,
+        sleep: `${name} is resting`,
+        free: `${name} has free time`,
+        before: `${name} starts soon`,
+        waiting: `${name} is ${v.aboard}`,
+        after: `${name} has finished!`,
+        finding: `Finding ${name}…`,
+      },
+      leg: (n, from, to, km) => `Leg ${n} · ${from} → ${to} · ${km} km`,
+      finishLeg: 'Into the finish together',
+      freeNote: 'Free time',
+      hours: (h, m) => (m ? `${h} h ${m} min` : `${h} h`),
+      minutes: (m) => `${m} min`,
+      left: (d) => `${d} left`,
+      ends: (t) => `ends ${t}`,
+      nextUp: (what, t) => (t ? `Next: <strong>${what}</strong> at ${t}` : `Next: <strong>${what}</strong>`),
+      kmLeft: (km) => `${km} km to go`,
+      plannedUntil: (t) => `planned until ${t}`,
+      finishesAbout: (t) => `finishes about ${t}`,
+      overrun: (t) => `planned until ${t} – taking longer`,
+      etaLeft: (d) => `about ${d} to go`,
+      waitingDetail: (leg) => `Waiting to take over · ${leg}`,
+      runnerAway: (d) => `runner about ${d} away`,
+      takesOver: (t) => `takes over about ${t}`,
+      arrives: (t) => `arrives about ${t}`,
+      lastFix: (ago) => `GPS ${ago}`,
+      stale: 'the tracker may be off',
+      noFix: 'No GPS position yet',
+      retrying: 'The map did not load – trying again…',
+      estimated: 'Tracker unavailable – position estimated from the timeline',
+      follow: `Follow ${name}`,
+      overview: 'Whole route',
+      schedule: 'Schedule',
+      sheet: 'Show or hide the details',
+      vehicle: v.noun,
+      scheduleTitle: (zone) => `Schedule (${zone})`,
+      mapLabel: `Map showing where ${name} is`,
+      // For the page's metadata and the picture a shared link shows.
+      description: (event, from, to) => `Follow ${name} through ${event} live, from ${from} to ${to}: every leg, every drive and every stop.`,
+      imageAlt: (from, to) => `${name} beside a map of the relay from ${from} to ${to}, with the legs marked`,
+      route: (from, to) => `${from} to ${to} · live`,
+      legsFor: `legs for ${name}`,
+      share: `${possessive} share`,
+      relayCourse: 'relay course',
+    };
+  },
+};

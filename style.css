@@ -1,0 +1,423 @@
+:root {
+  --run: #EB6834;
+  --drive: #E87BA4;
+  --sleep: #5F4D8C;
+  --free: #A9A79C;
+
+  /* Dark for everyone, to sit on the dark map. */
+  --bg: #161412;
+  --card: #221f1c;
+  --ink: #f4f1ec;
+  --ink-soft: #b3ada4;
+  --line: #37322d;
+  --shadow: 0 -6px 30px rgba(0, 0, 0, 0.5);
+  --radius: 20px;
+}
+
+/* ?theme=light, for the light map. */
+:root[data-theme="light"] {
+  --bg: #f4f1ec;
+  --card: #ffffff;
+  --ink: #221f1c;
+  --ink-soft: #6b665f;
+  --line: #e7e2da;
+  --shadow: 0 -6px 30px rgba(34, 31, 28, 0.14);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Maps sets position: relative on this element itself, so an inset alone
+   leaves it zero pixels tall; it needs a size of its own. */
+#map {
+  position: fixed !important;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The card sits over the bottom of the map: a sheet on a phone, a floating
+   panel on anything wider. */
+.card {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  max-height: 75dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--card);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow);
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 720px) {
+  .card {
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: 380px;
+    max-height: calc(100dvh - 32px);
+    border-radius: var(--radius);
+    padding-bottom: 16px;
+  }
+}
+
+/* The grab area is the card's whole top strip, padding included, so a thumb
+   that lands just above the bar still catches it. It stays pinned to the
+   top while the card scrolls, so a sheet pulled up to the schedule can
+   always be pulled back down. */
+.handle {
+  display: block;
+  position: sticky;
+  top: -8px;
+  z-index: 1;
+  width: calc(100% + 32px);
+  height: 36px;
+  margin: -8px -16px -4px;
+  background: var(--card);
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* On a phone the card is a sheet that can be pulled most of the way down,
+   by its handle or its headline. --tuck is how far, set by SheetDrag. */
+@media (max-width: 719px) {
+  .card {
+    transform: translateY(var(--tuck, 0px));
+    transition: transform 0.25s ease;
+  }
+
+  .card.dragging { transition: none; }
+
+  /* Pulled up, the schedule gets nearly the whole screen. */
+  .card.expanded { max-height: calc(100dvh - 56px); }
+  .card .status { touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .card.dragging { user-select: none; -webkit-user-select: none; }
+}
+
+@media (min-width: 720px) {
+  .handle { display: none; }
+}
+
+.handle::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 5px;
+  margin: 0 auto;
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-face {
+  width: 52px;
+  height: 52px;
+  flex: none;
+}
+
+.status-text { min-width: 0; }
+
+h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+#detail {
+  margin: 2px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.progress { margin-top: 14px; }
+
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 4px;
+  background: var(--fill, var(--run));
+  transition: width 0.6s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+#progress-left { font-weight: 600; }
+#progress-end { color: var(--ink-soft); }
+#progress-end.late { color: #e4a13a; }
+
+.next {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--dot, var(--free)) 14%, transparent);
+  font-size: 0.95rem;
+}
+
+.next strong { font-weight: 600; }
+
+.next-where {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+#detail[hidden] { display: none; }
+
+.meta {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.meta.stale { color: #c0392b; }
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Three equal buttons that may wrap their own words rather than widen the
+   row: the German labels are longer, and a phone has 343px to share. */
+.btn {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px 8px;
+  line-height: 1.15;
+  font-size: 0.9rem;
+  border: 0;
+  border-radius: 12px;
+  background: var(--run);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.schedule { margin-top: 12px; }
+
+.schedule h2 {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.legend li::before,
+.timeline li::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--dot);
+  vertical-align: 0;
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: baseline;
+  row-gap: 2px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.timeline .when {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline .what { font-weight: 600; white-space: nowrap; }
+
+.timeline .where {
+  grid-column: 2 / -1;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.timeline li.past { opacity: 0.45; }
+
+.timeline li.now {
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 10px;
+  border-top-color: transparent;
+  background: color-mix(in srgb, var(--dot) 16%, transparent);
+}
+
+.timeline li.now + li { border-top-color: transparent; }
+
+/* The runner on the map: their face, with an emoji badge for what they are doing. */
+.runner {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+  cursor: pointer;
+}
+
+.runner img {
+  width: 100%;
+  height: 100%;
+}
+
+.runner .badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 2.5px var(--badge);
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.runner .badge[hidden] { display: none; }
+
+/* The key's entry for the dashed, still-to-come part of the path. */
+.legend li.planned::before {
+  width: 16px;
+  height: 0;
+  border-radius: 0;
+  border-top: 3px dashed var(--ink-soft);
+  vertical-align: 3px;
+}
+
+/* A rest stop's name beside it. */
+.place-label {
+  position: absolute;
+  transform: translate(14px, -50%);
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  font: 600 12px/1.2 Inter, system-ui, sans-serif;
+  max-width: 44vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.place-label[hidden] { display: none; }
+
+.meta[hidden], .legend li[hidden] { display: none; }
+
+.place-label.left { transform: translate(calc(-100% - 14px), -50%); }
+
+/* Their birthday: a banner at the top of the card, and a cake on their head. */
+.birthday {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--drive) 30%, transparent), color-mix(in srgb, var(--run) 30%, transparent));
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.birthday[hidden] { display: none; }
+
+.runner .cake {
+  position: absolute;
+  top: 0;
+  left: -4px;
+  font-size: 26px;
+  line-height: 1;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.runner .cake[hidden] { display: none; }
+
+/* Their vehicle, wherever it is: a small tag in the driving colour, under the runner's
+   head when they are in it. */
+.vehicle-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  background: var(--drive);
+  color: #1c1a18;
+  box-shadow: 0 0 0 2px var(--bg), 0 2px 6px rgba(0, 0, 0, 0.4);
+  font: 700 12px/1.2 Inter, system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.vehicle-marker[hidden] { display: none; }

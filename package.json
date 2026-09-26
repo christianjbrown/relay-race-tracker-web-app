@@ -1,0 +1,29 @@
+{
+  "name": "relay-race-tracker-web-app",
+  "version": "1.0.0",
+  "description": "A live page that follows one person through a multi-leg relay race tracked by Chronorace GPS trackers.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
+  "scripts": {
+    "test": "vitest run --coverage",
+    "build": "node tools/build.js",
+    "fetch-route": "node tools/fetch-route.js",
+    "trackers": "node tools/list-trackers.js",
+    "preview": "sirv dist --port 8765 --dev",
+    "ci": "npm test && node tools/build.js --site example-site --out dist"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@napi-rs/canvas": "^1.0.9"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.11",
+    "happy-dom": "^20.14.5",
+    "sirv-cli": "^3.0.1",
+    "vitest": "^4.1.11"
+  }
+}

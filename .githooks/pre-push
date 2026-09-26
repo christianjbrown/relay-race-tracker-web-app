@@ -1,0 +1,4 @@
+#!/bin/sh
+# Runs the same checks as continuous integration before anything is pushed.
+set -e
+npm run ci

@@ -1,0 +1,23 @@
+{
+  "name": "Sam",
+  "emoji": "🏃",
+  "birthday": "05-16",
+  "vehicle": "bus",
+  "languages": ["en", "de"],
+  "timezone": "Europe/Brussels",
+  "event": {
+    "name": "Example Coast Relay 2027",
+    "from": { "en": "Ostend", "de": "Ostende" },
+    "to": { "en": "Brussels", "de": "Brüssel" }
+  },
+  "chronorace": {
+    "eventId": "0",
+    "runnerTracker": "RUN",
+    "vehicleTracker": "VAN1"
+  },
+  "site": {
+    "url": "https://example.com/where-is-sam/",
+    "indexable": false
+  },
+  "mapsApiKey": ""
+}

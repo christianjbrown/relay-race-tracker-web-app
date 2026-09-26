@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#161412">
+  <meta name="color-scheme" content="dark">
+{{head}}
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="map"></div>
+
+  <section class="card" id="card" aria-live="polite">
+    <button class="handle" id="toggle" aria-expanded="false" aria-controls="schedule"></button>
+
+    <p class="birthday" id="birthday" hidden></p>
+
+    <div class="status">
+      <img class="status-face" src="avatar.png" alt="">
+      <div class="status-text">
+        <h1 id="headline">{{headline}}</h1>
+        <p id="detail">{{detail}}</p>
+      </div>
+    </div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progress-bar"><span id="progress-fill"></span></div>
+      <div class="progress-labels"><span id="progress-left"></span><span id="progress-end"></span></div>
+    </div>
+
+    <p class="next" id="next" hidden></p>
+
+    <p class="meta" id="meta"></p>
+
+    <div class="actions">
+      <button class="btn" id="centre"></button>
+      <button class="btn btn-quiet" id="overview"></button>
+      <button class="btn btn-quiet" id="schedule-toggle" aria-expanded="false" aria-controls="schedule"></button>
+    </div>
+
+    <ul class="legend" id="legend"></ul>
+
+    <div class="schedule" id="schedule" hidden>
+      <h2 id="schedule-title"></h2>
+      <ol class="timeline" id="timeline"></ol>
+    </div>
+  </section>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
