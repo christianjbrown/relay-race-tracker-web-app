@@ -1,4 +1,5 @@
 import { localise } from '../../src/i18n/language.js';
+import { siteWords } from '../../src/i18n/site-words.js';
 
 /**
  * What the share card says, in the site's first language: who, which
@@ -6,7 +7,7 @@ import { localise } from '../../src/i18n/language.js';
  * kilometres, the whole course, and the dates.
  */
 export function cardFacts(config, schedule, course, locales) {
-  const [first, second] = config.languages.map((code) => ({ code, locale: locales[code], words: locales[code].words({ name: config.name, vehicle: config.vehicle }) }));
+  const [first, second] = config.languages.map((code) => ({ code, locale: locales[code], words: siteWords(locales, config, code) }));
   const text = (value) => localise(value, first.code);
   const number = new Intl.NumberFormat(first.locale.tag, { maximumFractionDigits: 0 });
   const legs = schedule.segments.filter((s) => s.kind === 'run' && !s.finish);

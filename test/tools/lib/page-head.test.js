@@ -22,6 +22,15 @@ const segments = [
 ];
 
 describe('PageHead', () => {
+  it('uses the site\'s own title, per language, everywhere the title goes', () => {
+    const head = new PageHead(config({ languages: ['en', 'de'], title: { en: 'Sam on the road', de: 'Sam unterwegs' } }), segments, LOCALES);
+    const html = head.render('abc123');
+    expect(html).toContain('<title>Sam on the road · Sam unterwegs – Coast Relay</title>');
+    expect(html).toContain('<meta property="og:site_name" content="Sam on the road">');
+    expect(html).toContain('<meta property="og:title" content="Sam on the road · Sam unterwegs">');
+    expect(html).not.toContain('Where is Sam?');
+  });
+
   it('renders title, canonical, og tags and hreflang for two languages', () => {
     const head = new PageHead(config({ languages: ['en', 'de'], site: { url: baseRaw.site.url, indexable: true } }), segments, LOCALES);
     const html = head.render('abc123');

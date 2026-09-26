@@ -1,4 +1,5 @@
 import { localise } from '../../src/i18n/language.js';
+import { siteWords } from '../../src/i18n/site-words.js';
 import { escapeHtml } from '../../src/ui/escape-html.js';
 
 /**
@@ -14,7 +15,7 @@ export class PageHead {
     this.langs = config.languages.map((code) => ({
       code,
       locale: locales[code],
-      words: locales[code].words({ name: config.name, vehicle: config.vehicle }),
+      words: siteWords(locales, config, code),
       text: (value) => localise(value, code),
     }));
   }

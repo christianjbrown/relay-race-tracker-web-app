@@ -168,6 +168,7 @@ browser sends it to Google, which is why the restrictions matter.
 | Setting | What it is |
 |---|---|
 | `name` | The runner's name, as the page should say it. |
+| `title` | The page's title, in the browser tab, link previews and the share card. Default "Where is Sam?" in each language, from `name`. Optional; a string, or one per language. |
 | `emoji` | Their badge while running. Default `🏃`; `🏃‍♀️` and `🚴` also work. |
 | `birthday` | `"MM-DD"`, to wish them happy birthday on the day. Optional. |
 | `vehicle` | `bus`, `van` or `car`: what the page calls the vehicle. Default `bus`. |
