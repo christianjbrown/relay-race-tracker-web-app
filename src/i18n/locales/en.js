@@ -51,7 +51,7 @@ export default {
       stale: 'the tracker may be off',
       noFix: 'No GPS position yet',
       retrying: 'The map did not load – trying again…',
-      estimated: 'Tracker unavailable – position estimated from the timeline',
+      estimated: 'Can’t reach Chronorace right now – position estimated from the timeline',
       follow: `Follow ${name}`,
       overview: 'Whole route',
       schedule: 'Schedule',
