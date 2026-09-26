@@ -23,7 +23,7 @@ export class RouteFetch {
     if (!chosen) throw new Error(`Chronorace event ${eventId} has no course called "${track}". It has: ${tracks.map((t) => t.Name).join(', ')}.`);
     if (tracks.length > 1 && track == null) this.log(`The event has ${tracks.length} courses (${tracks.map((t) => t.Name).join(', ')}); using the first. Choose another with --track.`);
     const file = path.join(site, 'route.json');
-    await this.files.write(file, JSON.stringify({ name: chosen.Name, polylines: chosen.Polylines }));
+    await this.files.write(file, `${JSON.stringify({ name: chosen.Name, polylines: chosen.Polylines }, null, 2)}\n`);
     this.log(`Wrote ${file}: ${chosen.Name}.`);
   }
 }
