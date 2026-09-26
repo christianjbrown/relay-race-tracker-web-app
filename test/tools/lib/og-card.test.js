@@ -14,7 +14,7 @@ function fakeCourse(points) {
 }
 
 async function avatar() {
-  const buf = await readFile(path.join(import.meta.dirname, '..', '..', '..', 'example-site', 'photo.png'));
+  const buf = await readFile(path.join(import.meta.dirname, '..', '..', '..', 'example-config', 'photo.png'));
   return canvas.loadImage(buf);
 }
 

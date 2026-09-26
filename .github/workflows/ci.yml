@@ -36,7 +36,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: node tools/build.js --site example-site --out dist
+      - run: node tools/build.js --config example-config --out dist
 
   # The one check branch protection requires, so the matrix can change
   # without touching the protection settings.

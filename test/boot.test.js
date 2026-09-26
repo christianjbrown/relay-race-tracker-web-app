@@ -9,7 +9,7 @@ import { publishedRoute } from '../tools/lib/route-file.js';
 const TEMPLATE = fs.readFileSync(path.resolve(__dirname, '../index.template.html'), 'utf8');
 const BODY = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[\s\S]*?<\/script>/, '');
 
-const SITE_DIR = path.resolve(__dirname, '../example-site');
+const SITE_DIR = path.resolve(__dirname, '../example-config');
 const config = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'config.json'), 'utf8'));
 const schedule = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'schedule.json'), 'utf8'));
 // The page downloads the route as the build publishes it: encoded.

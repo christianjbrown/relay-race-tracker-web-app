@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const repoRoot = path.join(import.meta.dirname, '..', '..');
-const exampleSite = path.join(repoRoot, 'example-site');
+const exampleSite = path.join(repoRoot, 'example-config');
 
 describe('tools/fetch-route.js', () => {
   let dir;
@@ -23,7 +23,7 @@ describe('tools/fetch-route.js', () => {
     dir = await mkdtemp(path.join(os.tmpdir(), 'fetch-route-cli-'));
     const site = path.join(dir, 'site');
     await cp(exampleSite, site, { recursive: true });
-    process.argv = ['node', 'fetch-route.js', '--site', site];
+    process.argv = ['node', 'fetch-route.js', '--config', site];
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.stubGlobal('fetch', vi.fn(async () => ({
       ok: true,

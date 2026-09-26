@@ -11,7 +11,7 @@ import { Icons, Sticker } from '../../../tools/lib/sticker.js';
 import { decodePolyline } from '../../../src/domain/geo.js';
 
 const repoRoot = path.join(import.meta.dirname, '..', '..', '..');
-const exampleSite = path.join(repoRoot, 'example-site');
+const exampleSite = path.join(repoRoot, 'example-config');
 const canvas = nodeCanvas();
 
 async function tempDir() {
