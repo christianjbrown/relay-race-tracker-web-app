@@ -29,7 +29,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, log);
     await rf.run({ site: 'site' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', JSON.stringify({ name: 'A', polylines: ['a'] }));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', `${JSON.stringify({ name: 'A', polylines: ['a'] }, null, 2)}\n`);
     expect(log).toHaveBeenCalledWith(expect.stringContaining('2 courses (A, B)'));
   });
 
@@ -39,7 +39,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, vi.fn());
     await rf.run({ site: 'site', track: 'B' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', JSON.stringify({ name: 'B', polylines: ['b'] }));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', `${JSON.stringify({ name: 'B', polylines: ['b'] }, null, 2)}\n`);
   });
 
   it('picks a track by index', async () => {
@@ -48,7 +48,7 @@ describe('RouteFetch', () => {
     const f = files();
     const rf = new RouteFetch(f, feedFor, vi.fn());
     await rf.run({ site: 'site', track: '1' });
-    expect(f.write).toHaveBeenCalledWith('site/route.json', JSON.stringify({ name: 'B', polylines: ['b'] }));
+    expect(f.write).toHaveBeenCalledWith('site/route.json', `${JSON.stringify({ name: 'B', polylines: ['b'] }, null, 2)}\n`);
   });
 
   it('throws for an unknown track', async () => {
