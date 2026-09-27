@@ -57,6 +57,12 @@ describe('LegProgress', () => {
       expect(legs.check(leg1, ctx(30, 104, { vehicleWaiting: vehicle }))).toMatchObject({ seg: drive1, state: 'planned' });
     });
 
+    it('carries on to the end past a vehicle the runner has already gone by', () => {
+      const behind = { ...offCourse(60, 0.1), time: at(50) };
+      expect(legs.check(leg1, ctx(50, 70, { vehicleWaiting: behind }))).toMatchObject({ state: 'running', reached: 70, end: 100 });
+      expect(legs.check(leg1, ctx(70, 70, { vehicleWaiting: behind }))).toMatchObject({ state: 'overrun', end: 100 });
+    });
+
     it('has nothing after the last leg', () => {
       const only = build({ segments: [{ start: at(0).toISOString(), end: at(60).toISOString(), kind: 'run', leg: 1, km: 11, from: place(0), to: place(100) }] });
       expect(only.legs.check(only.schedule.segments[0], ctx(30, 104, { vehicleWaiting: vehicle }))).toBeNull();
