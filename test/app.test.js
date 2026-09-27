@@ -129,6 +129,16 @@ describe('App', () => {
       expect(arg.vehicle).toEqual({ ...vehicle, parked: true });
     });
 
+    it('counts the vehicle as parked on the first poll when the team is gathered round it', () => {
+      const vehicle = { lat: 1, lng: 1, time: new Date('2027-05-15T09:59:00Z') };
+      const { app, deps } = makeApp({
+        poller: { poll: vi.fn(), liveVehicle: vi.fn(() => vehicle), liveRunner: vi.fn(() => null), live: {}, fillGuesses: vi.fn() },
+        handovers: { parked: vi.fn(() => true), still: null },
+      });
+      app.now();
+      expect(deps.activity.at.mock.calls[0][1].vehicle).toEqual({ ...vehicle, parked: true });
+    });
+
     it('has a driving (non-waiting) vehicle when handovers say it has not parked', () => {
       const vehicle = { lat: 1, lng: 1 };
       const { app, deps } = makeApp({

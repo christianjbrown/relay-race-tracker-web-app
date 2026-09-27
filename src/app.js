@@ -54,12 +54,14 @@ export class App {
   /** What the runner is doing now: the timeline, corrected by the trackers. */
   now(now = this.clock.now()) {
     const vehicle = this.poller.liveVehicle(now, this.tuning.staleMs);
+    const withTeam = Boolean(vehicle) && this.handovers.parked(vehicle, now);
     return this.activity.at(now, {
       runner: this.runner(now),
-      vehicleWaiting: vehicle && this.handovers.parked(vehicle, now) ? vehicle : null,
-      // Parked only once two polls agree it has not moved; until then, as
-      // far as arriving goes, it may still be driving.
-      vehicle: vehicle ? { ...vehicle, parked: this.handovers.still === true } : null,
+      vehicleWaiting: withTeam ? vehicle : null,
+      // Parked once two polls agree it has not moved, or at once when the
+      // team's other trackers are gathered round it, so a page opened after
+      // the vehicle arrived does not show it still driving for a poll.
+      vehicle: vehicle ? { ...vehicle, parked: this.handovers.still === true || withTeam } : null,
       paceKmh: this.pace.kmh(this.tuning.jogKmh),
     });
   }
@@ -82,7 +84,7 @@ export class App {
 
   render() {
     const now = this.clock.now();
-    this.poller.fillGuesses(this.estimator.at(now));
+    this.poller.fillGuesses(this.estimator.at(now), now, this.tuning.staleMs);
     const act = this.now(now);
     const runner = this.runner(now);
     const incoming = this.incoming.place(act, runner, now);
