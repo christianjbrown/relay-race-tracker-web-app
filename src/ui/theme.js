@@ -2,8 +2,8 @@ export const KINDS = Object.freeze(['run', 'drive', 'sleep', 'free']);
 
 /** What changes with the map's theme: the halo under each line, the course, and an empty dot. */
 export const THEMES = Object.freeze({
-  light: { name: 'light', halo: '#ffffff', course: '#9a978f', blank: '#ffffff' },
-  dark: { name: 'dark', halo: '#161412', course: '#6a655d', blank: '#2a2724' },
+  light: { name: 'light', halo: '#ffffff', course: '#8a867e', blank: '#ffffff' },
+  dark: { name: 'dark', halo: '#161412', course: '#948e85', blank: '#2a2724' },
 });
 
 /** Dark for everyone, whatever the device prefers; `?theme=light` for the light one. */
