@@ -437,8 +437,8 @@ h1 {
   font-size: 15px;
   line-height: 1;
   pointer-events: none;
-  opacity: 0.55;
-  filter: saturate(0.4);
+  opacity: 0.75;
+  filter: saturate(0.7);
 }
 
 .group-marker[hidden] { display: none; }
