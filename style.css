@@ -422,3 +422,21 @@ h1 {
 }
 
 .vehicle-marker[hidden] { display: none; }
+
+/* The rest of the team on the course: there to glance at, never mistaken for the runner. */
+.group-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 2px 7px 2px 5px;
+  border-radius: 999px;
+  background: var(--run);
+  color: #1c1a18;
+  box-shadow: 0 0 0 2px var(--bg);
+  font: 600 11px/1.2 Inter, system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.55;
+  filter: saturate(0.4);
+}
+
+.group-marker[hidden] { display: none; }

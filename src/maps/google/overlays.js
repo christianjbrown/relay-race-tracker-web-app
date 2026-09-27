@@ -62,15 +62,18 @@ export function makeRunnerMarker(maps, doc) {
   };
 }
 
-/** The vehicle on the map, as a small tag of its own, wherever it really is. */
+/**
+ * A small tag on the map, wherever a tracker really is: the vehicle, or
+ * (as 'group-marker') the rest of the team on the course.
+ */
 export function makeVehicleMarker(maps, doc) {
   return class VehicleMarker extends maps.OverlayView {
-    constructor(label) {
+    constructor(label, className = 'vehicle-marker') {
       super();
       this.maps = maps;
       this.pos = null;
       this.el = doc.createElement('div');
-      this.el.className = 'vehicle-marker';
+      this.el.className = className;
       this.el.textContent = label;
       this.el.hidden = true;
     }

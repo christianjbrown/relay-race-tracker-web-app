@@ -26,6 +26,8 @@ function makeApp(overrides = {}) {
     card: { render: vi.fn() },
     runnerMarker: { update: vi.fn() },
     vehicleMarker: { update: vi.fn() },
+    group: { where: vi.fn(() => null) },
+    groupMarker: { update: vi.fn() },
     birthday: { on: vi.fn(() => false) },
     tuning: { pollMs: 5000, staleMs: 60000, jogKmh: 8 },
     timers: { setInterval: vi.fn() },
@@ -222,6 +224,18 @@ describe('App', () => {
       });
       app.render();
       expect(deps.vehicleMarker.update).toHaveBeenCalledWith(vehicle);
+    });
+
+    it('shows the rest of the team where the group says, from the runner tracker', () => {
+      const runnerFix = { lat: 5, lng: 6, time: new Date('2027-05-15T09:59:00Z') };
+      const { app, deps } = makeApp({
+        activity: { at: vi.fn(() => ({ kind: 'sleep', state: 'planned', index: 1 })) },
+        group: { where: vi.fn(() => runnerFix) },
+      });
+      deps.poller.liveRunner.mockReturnValue(runnerFix);
+      app.render();
+      expect(deps.group.where).toHaveBeenCalledWith(expect.objectContaining({ kind: 'sleep' }), runnerFix, deps.clock.now());
+      expect(deps.groupMarker.update).toHaveBeenCalledWith(runnerFix);
     });
 
     it('shows the vehicle when the runner is on a leg but waiting for it', () => {

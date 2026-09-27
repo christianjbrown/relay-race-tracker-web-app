@@ -23,6 +23,8 @@ export class App {
     this.card = deps.card;
     this.runnerMarker = deps.runnerMarker;
     this.vehicleMarker = deps.vehicleMarker;
+    this.group = deps.group;
+    this.groupMarker = deps.groupMarker;
     this.birthday = deps.birthday;
     this.tuning = deps.tuning;
     this.timers = deps.timers;
@@ -92,6 +94,7 @@ export class App {
     // guess - and not while the runner is out on a leg without it.
     const onLeg = act.kind === 'run' && act.state !== 'waiting';
     this.vehicleMarker.update(onLeg ? null : vehicle);
+    this.groupMarker.update(this.group.where(act, runner, now));
     this.painter.paint(this.journey.pieces(now, act, vehicle));
     const trip = act.kind === 'drive' && vehicle ? this.eta.estimate(act.seg, vehicle, now) : null;
     const handover = incoming ? this.incoming.arrival(incoming, this.pace.kmh(this.tuning.jogKmh)) : null;
