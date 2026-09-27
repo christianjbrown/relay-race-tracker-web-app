@@ -39,9 +39,12 @@ export const DEFAULT_TUNING = Object.freeze({
   // How far from a leg's start the parked vehicle can be and still be where
   // the runner coming in hands over.
   vehicleNearStartKm: 3,
-  // A leg or drive the trackers say is still going is believed for this
-  // long past its planned end, and no longer.
+  // A leg the trackers say is still going is believed for this long past
+  // its planned end, and no longer. A drive gets much less: a page opened
+  // after the vehicle reached the stop and went out again never saw it
+  // arrive, and would otherwise keep the runner on the road for hours.
   maxOverrunHours: 4,
+  maxDriveOverrunMinutes: 60,
   // Timing a runner starts from a planned pace: an average jog for the
   // runner coming in, the leg's own planned pace for ours. The pace seen
   // along the course takes over as the page watches: nothing is shown
@@ -89,6 +92,7 @@ export function resolveTuning(overrides = {}) {
     arrivedKm: t.arrivedKm,
     vehicleNearStartKm: t.vehicleNearStartKm,
     maxOverrunMs: t.maxOverrunHours * 60 * MINUTE,
+    maxDriveOverrunMs: t.maxDriveOverrunMinutes * MINUTE,
     jogKmh: t.jogKmh,
     paceWindowMs: t.paceWindowSeconds * 1000,
     paceTrustMs: t.paceTrustMinutes * MINUTE,

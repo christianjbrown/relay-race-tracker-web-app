@@ -295,7 +295,9 @@ The schedule is a guide, and the trackers correct it:
 - **On a drive** the vehicle is followed on Google's route, which is re-routed
   if the vehicle takes another road. The arrival time comes from Google's
   estimate with today's traffic. A drive carries on past its planned end until
-  the vehicle is at the door or parked nearby.
+  the vehicle is at the door or parked nearby, for up to an hour. After that the
+  schedule takes over, since a vehicle that has already arrived and gone out
+  again looks the same as one that is still on its way.
 - **If the runner tracker goes quiet** while Chronorace still answers, its fix
   is carried on along the course at the pace last seen, once it is two minutes
   old and for up to an hour. It stops half a kilometre short of the next place

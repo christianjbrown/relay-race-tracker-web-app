@@ -7,6 +7,7 @@ describe('resolveTuning', () => {
     expect(t.pollMs).toBe(30000);
     expect(t.staleMs).toBe(15 * 60000);
     expect(t.maxOverrunMs).toBe(4 * 3600000);
+    expect(t.maxDriveOverrunMs).toBe(3600000);
     expect(t.paceWindowMs).toBe(60000);
     expect(t.paceTrustMs).toBe(20 * 60000);
     expect(t.jogKmh).toBe(9);

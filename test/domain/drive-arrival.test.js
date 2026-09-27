@@ -36,9 +36,9 @@ describe('DriveArrival', () => {
     expect(arrivals.check(segs[2], { now: at(120), vehicle: near(10) })).toBeNull();
   });
 
-  it('gives up on the drive after four hours', () => {
+  it('gives up on the drive an hour after its planned end', () => {
     const { segs, arrivals } = setup();
-    expect(arrivals.check(segs[2], { now: at(90 + 240), vehicle: near(10) })).toBeNull();
-    expect(arrivals.check(segs[2], { now: at(90 + 239), vehicle: near(10) })).toMatchObject({ state: 'overrun' });
+    expect(arrivals.check(segs[2], { now: at(90 + 60), vehicle: near(10) })).toBeNull();
+    expect(arrivals.check(segs[2], { now: at(90 + 59), vehicle: near(10) })).toMatchObject({ state: 'overrun' });
   });
 });
