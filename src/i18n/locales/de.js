@@ -54,6 +54,7 @@ export default {
       noFix: 'Noch keine GPS-Position',
       retrying: 'Die Karte hat nicht geladen – neuer Versuch …',
       estimated: 'Chronorace gerade nicht erreichbar – Position anhand des Zeitplans geschätzt',
+      projected: (since, kmh) => `Läufer-Tracker seit ${since} still – Position mit ${kmh} km/h hochgerechnet`,
       follow: `${name} folgen`,
       overview: 'Ganze Strecke',
       schedule: 'Zeitplan',

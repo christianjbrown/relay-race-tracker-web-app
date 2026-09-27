@@ -52,6 +52,13 @@ export const DEFAULT_TUNING = Object.freeze({
   paceTrustMinutes: 20,
   paceMinKmh: 3,
   paceMaxKmh: 20,
+  // A runner tracker whose fix has not changed for quietMinutes, while the
+  // feed still answers, is carried on along the course at the pace last
+  // seen, for up to maxProjectMinutes, and stops holdShortKm before the
+  // next handover rather than guess that the leg has changed hands.
+  quietMinutes: 2,
+  maxProjectMinutes: 60,
+  holdShortKm: 0.5,
 });
 
 const MINUTE = 60 * 1000;
@@ -87,5 +94,8 @@ export function resolveTuning(overrides = {}) {
     paceTrustMs: t.paceTrustMinutes * MINUTE,
     paceMinKmh: t.paceMinKmh,
     paceMaxKmh: t.paceMaxKmh,
+    quietMs: t.quietMinutes * MINUTE,
+    maxProjectMs: t.maxProjectMinutes * MINUTE,
+    holdShortKm: t.holdShortKm,
   });
 }

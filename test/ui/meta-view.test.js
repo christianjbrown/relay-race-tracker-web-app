@@ -63,6 +63,14 @@ describe('MetaView', () => {
     expect(els.get('meta').textContent).toBe(`${words.lastFix(formatsAgo(now, fix))} – ${words.stale}`);
     expect(els.get('meta').classList.contains('stale')).toBe(true);
   });
+
+  it('says when the runner tracker went quiet and the pace it is projected at', () => {
+    const { view, els } = makeView();
+    const fix = { ...fixAt(10, at(30)), projected: { since: at(10), kmh: 10.6 } };
+    view.render(at(30), fix, { state: 'running' });
+    expect(els.get('meta').textContent).toBe('Runner tracker quiet since 09:10 – position projected at 10.6 km/h');
+    expect(els.get('meta').classList.contains('stale')).toBe(true);
+  });
 });
 
 function formatsAgo(now, fix) {
