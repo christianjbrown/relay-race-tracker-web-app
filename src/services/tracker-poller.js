@@ -2,7 +2,9 @@
  * Asks the feed where the runner and vehicle trackers are. Whichever the
  * feed cannot give - the whole feed failing, or one tracker missing from
  * it - is logged and left to be estimated from the timeline, so the page
- * always shows the runner somewhere and says when it is a guess.
+ * always shows the runner somewhere and says when it is a guess. A real
+ * position is kept through a failed request until it goes stale, since one
+ * request timing out says nothing about where the tracker is.
  */
 export class TrackerPoller {
   constructor(feed, bibs, handovers, logger) {
@@ -44,19 +46,26 @@ export class TrackerPoller {
     return Object.entries(fixes).filter(([id]) => !mine.has(id)).map(([, fix]) => fix);
   }
 
-  /** Puts estimates in for whichever trackers the last poll could not give. */
-  fillGuesses(estimate) {
-    for (const which of this.guessed) this.live[which] = estimate;
+  /**
+   * Puts estimates in for whichever trackers the last poll could not give,
+   * unless the real position from before is still fresh.
+   */
+  fillGuesses(estimate, now, staleMs) {
+    for (const which of this.guessed) {
+      const held = this.live[which];
+      if (!held || held.estimated || now - held.time > staleMs) this.live[which] = estimate;
+    }
   }
 
-  /** The vehicle's live position, or null when it is guessed or stale. */
+  /** The vehicle's real position, or null when it is estimated or stale. */
   liveVehicle(now, staleMs) {
     const v = this.live.vehicle;
-    return this.guessed.has('vehicle') || !v || now - v.time > staleMs ? null : v;
+    return !v || v.estimated || now - v.time > staleMs ? null : v;
   }
 
-  /** The runner's tracker fix, or null when it is guessed. */
+  /** The runner tracker's real fix, or null when it is estimated. */
   liveRunner() {
-    return this.guessed.has('runner') ? null : this.live.runner;
+    const r = this.live.runner;
+    return r && !r.estimated ? r : null;
   }
 }

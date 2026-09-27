@@ -45,21 +45,42 @@ describe('TrackerPoller', () => {
   it('fills in estimates for what it guessed', async () => {
     const { p } = poller({ fixes: { v: fixes.v } });
     await p.poll();
-    const guess = { lat: 9, lng: 9, estimated: true };
-    p.fillGuesses(guess);
+    const guess = { lat: 9, lng: 9, time: t(1), estimated: true };
+    p.fillGuesses(guess, t(1), 60000);
     expect(p.live.runner).toBe(guess);
     expect(p.live.vehicle).toBe(fixes.v);
+    expect(p.liveRunner()).toBeNull();
+  });
+
+  it('keeps a fresh real position through a failed request, and estimates once it is stale', async () => {
+    const feed = {
+      devicesByBib: vi.fn(() => Promise.resolve({ RUN: 'r', VAN1: 'v' })),
+      positions: vi.fn().mockResolvedValueOnce(fixes).mockRejectedValue(new Error('timed out')),
+    };
+    const p = new TrackerPoller(feed, { runner: 'RUN', vehicle: 'VAN1' }, { observe: vi.fn() }, { error: vi.fn() });
+    await p.poll();
+    await p.poll();
+    expect([...p.guessed].sort()).toEqual(['runner', 'vehicle']);
+    const guess = { lat: 9, lng: 9, estimated: true };
+
+    p.fillGuesses(guess, t(1), 5 * 60000);
+    expect(p.live).toEqual({ runner: fixes.r, vehicle: fixes.v });
+    expect(p.liveVehicle(t(1), 5 * 60000)).toBe(fixes.v);
+    expect(p.liveRunner()).toBe(fixes.r);
+
+    p.fillGuesses(guess, t(6), 5 * 60000);
+    expect(p.live).toEqual({ runner: guess, vehicle: guess });
+    expect(p.liveVehicle(t(6), 5 * 60000)).toBeNull();
     expect(p.liveRunner()).toBeNull();
   });
 
   it('gives the live vehicle only when it is real and fresh', async () => {
     const { p } = poller({ fixes });
     expect(p.liveVehicle(t(0), 60000)).toBeNull();
+    expect(p.liveRunner()).toBeNull();
     await p.poll();
     expect(p.liveVehicle(t(1), 60000)).toBe(fixes.v);
     expect(p.liveVehicle(t(2), 60000)).toBeNull();
     expect(p.liveRunner()).toBe(fixes.r);
-    p.guessed.add('vehicle');
-    expect(p.liveVehicle(t(0), 60000)).toBeNull();
   });
 });
