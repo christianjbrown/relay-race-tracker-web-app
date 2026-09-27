@@ -13,6 +13,7 @@ export class App {
     this.handovers = deps.handovers;
     this.pace = deps.pace;
     this.legFinish = deps.legFinish;
+    this.incoming = deps.incoming;
     this.locator = deps.locator;
     this.journey = deps.journey;
     this.eta = deps.eta;
@@ -68,7 +69,8 @@ export class App {
     const now = this.clock.now();
     this.poller.fillGuesses(this.estimator.at(now));
     const act = this.now(now);
-    this.timePace(act);
+    const incoming = this.incoming.place(act, this.poller.liveRunner(), now);
+    this.timePace(act, incoming);
     const fix = this.locator.where(act, this.poller.live);
     const badge = { finished: 'finished', waiting: 'drive', before: null }[act.state] ?? act.kind;
     this.runnerMarker.update(fix, badge, this.birthday.on(now));
@@ -79,14 +81,22 @@ export class App {
     this.vehicleMarker.update(onLeg ? null : vehicle);
     this.painter.paint(this.journey.pieces(now, act, vehicle));
     const trip = act.kind === 'drive' && vehicle ? this.eta.estimate(act.seg, vehicle, now) : null;
-    this.card.render(now, fix, act, trip, this.legFinish.at(now, act));
+    const handover = incoming ? this.incoming.arrival(incoming, this.pace.kmh(this.tuning.jogKmh)) : null;
+    this.card.render(now, fix, act, trip, this.legFinish.at(now, act), handover);
     this.sheet?.refresh();
   }
 
-  /** A new runner is timed from scratch: ours on a leg, or the one coming in while ours waits. */
-  timePace(act) {
-    this.pace.follow(act.kind === 'run' ? `${act.index}:${act.state === 'waiting' ? 'incoming' : 'ours'}` : null);
+  /**
+   * A new runner is timed from scratch: ours on a leg, or the one coming in
+   * while ours waits or is driven to the leg. The drive and the wait time the
+   * same runner, so the pace carries on from one into the other.
+   */
+  timePace(act, incoming = null) {
+    const onLeg = act.kind === 'run';
+    const stint = onLeg ? `${act.index}:${act.state === 'waiting' ? 'incoming' : 'ours'}` : incoming && `${incoming.index}:incoming`;
+    this.pace.follow(stint ?? null);
+    const at = onLeg ? act.at : incoming?.at;
     const runner = this.poller.liveRunner();
-    if (act.kind === 'run' && act.at != null && runner) this.pace.observe(runner.time.getTime(), this.course.km[act.at]);
+    if (at != null && runner) this.pace.observe(runner.time.getTime(), this.course.km[at]);
   }
 }
