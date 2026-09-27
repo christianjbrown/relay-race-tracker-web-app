@@ -73,6 +73,10 @@ function fakeFeed(byScene, bibs) {
 function serve(dir) {
   const server = http.createServer(async (req, res) => {
     const file = path.join(dir, decodeURIComponent(new URL(req.url, 'http://x').pathname).replace(/\/$/, '/index.html'));
+    if (!file.startsWith(dir + path.sep)) {
+      res.writeHead(404).end();
+      return;
+    }
     try {
       const body = await fs.readFile(file);
       res.writeHead(200, { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' }).end(body);
@@ -107,8 +111,10 @@ class Browser {
     this.waiting = new Map();
     ws.addEventListener('message', (e) => {
       const m = JSON.parse(e.data);
-      this.waiting.get(m.id)?.(m.result);
+      if (!Number.isInteger(m.id) || !this.waiting.has(m.id)) return; // an event, not an answer
+      const resolve = this.waiting.get(m.id);
       this.waiting.delete(m.id);
+      resolve(m.result);
     });
   }
 
