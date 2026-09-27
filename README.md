@@ -29,7 +29,7 @@ documented API and could change.
 
 <p>
   <img src="docs/screenshot-desktop.png" width="72%" alt="The example page on a computer: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with 15 km to go and live GPS">
-  <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam on the bus to the team hotel, arriving in about 9 minutes">
+  <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam resting at the team hotel in Ghent, with the rest of the team shown faded further along the course">
 </p>
 
 ⚠️ **Ask first.** This page shows a real person's live location to anyone with
@@ -270,7 +270,8 @@ The schedule is a guide, and the trackers correct it:
 - **Before a leg** the runner is waiting in the vehicle until the runner coming
   in reaches them, however late that is. The card estimates when, at an average
   jog of 9 km/h, or at the incoming runner's own pace once the page has watched
-  them for a minute.
+  them for a minute. On the drive to a leg, the time given for it is whichever
+  is later: the vehicle arriving, or the runner coming in reaching the start.
 - **The surest handover point is the vehicle itself.** When it is parked on the
   course near the end of a leg, ahead of the runner, with other team vehicles
   gathered around it and not moving, the leg ends there once the runner is
@@ -282,6 +283,11 @@ The schedule is a guide, and the trackers correct it:
   if the vehicle takes another road. The arrival time comes from Google's
   estimate with today's traffic. A drive carries on past its planned end until
   the vehicle is at the door or parked nearby.
+- **If the runner tracker goes quiet** while Chronorace still answers, its fix
+  is carried on along the course at the pace last seen, once it is two minutes
+  old and for up to an hour. It stops half a kilometre short of the next place
+  one of the runner's legs starts or ends, so only a real fix can say a leg has
+  changed hands. The card says the tracker is quiet and what pace it assumes.
 - **After the finish** the runner stays on the finish line. 🏁
 - **If Chronorace fails**, the problem is logged to the browser console and the
   position is estimated from the schedule: time divided equally along the leg
