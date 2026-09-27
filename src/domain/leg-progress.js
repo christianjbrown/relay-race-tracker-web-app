@@ -25,9 +25,11 @@ export class LegProgress {
     if (meet !== null) {
       // Met by either measure: along the course, or straight across,
       // because the course can wind round a car park to reach the vehicle.
-      const apart = this.course.between(at, meet) > this.tuning.meetKm && kmApart(runner, vehicleWaiting) > this.tuning.meetKm;
-      if (apart) return this.states.of(leg, late ? 'overrun' : 'running', { reached: within(meet), at, end: meet });
-      return this.handedOver(leg);
+      const ahead = this.course.between(at, meet);
+      const apart = Math.abs(ahead) > this.tuning.meetKm && kmApart(runner, vehicleWaiting) > this.tuning.meetKm;
+      if (!apart) return this.handedOver(leg);
+      // A vehicle the runner has already gone past is not waiting for them.
+      if (ahead > 0) return this.states.of(leg, late ? 'overrun' : 'running', { reached: within(meet), at, end: meet });
     }
     if (late) {
       return this.passedEnd(leg, at) ? null : this.states.of(leg, 'overrun', { reached: within(b), at, end: b });
