@@ -380,6 +380,11 @@ h1 {
 
 .place-label.left { transform: translate(calc(-100% - 14px), -50%); }
 
+/* Stepped out past the runner's face and badge while they are at the stop. */
+.place-label.clear { transform: translate(46px, -50%); }
+
+.place-label.left.clear { transform: translate(calc(-100% - 46px), -50%); }
+
 /* Their birthday: a banner at the top of the card, and a cake on their head. */
 .birthday {
   margin: 0 0 12px;

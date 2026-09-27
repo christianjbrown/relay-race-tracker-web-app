@@ -28,8 +28,8 @@ tracking feed that Chronorace's own tracking page reads, which is not a
 documented API and could change.
 
 <p>
-  <img src="docs/screenshot-desktop.png" width="72%" alt="The example page on a computer: Sam halfway through leg 2 on a dark map of the course from Ostend to Brussels, with 15 km to go and live GPS">
-  <img src="docs/screenshot-phone.png" width="24%" alt="The example page on a phone: Sam resting at the team hotel in Ghent, with the rest of the team shown faded further along the course">
+  <img src="docs/screenshot-run-desktop.png" width="72%" alt="The example page on a computer: Sam on leg 4 from Leuven to Kortenberg with 5.2 km to go, on a dark map of the whole relay from Ostend round Flanders to Brussels, most of it already done">
+  <img src="docs/screenshot-run-phone.png" width="24%" alt="The same moment on a phone: Sam on leg 4 with 5.2 km to go">
 </p>
 
 ⚠️ **Ask first.** This page shows a real person's live location to anyone with
@@ -50,6 +50,19 @@ off (the default) unless they want the page to turn up in search engines.
 - The full schedule, in the event's time zone.
 - A share card and link preview made from the real route, and a birthday cake
   on the day if you give a birthday.
+
+On the bus to the hotel, and resting there, with the rest of the team still
+out on the course:
+
+<p>
+  <img src="docs/screenshot-bus-desktop.png" width="72%" alt="The example page on a computer: Sam on the bus north to the team hotel in Ghent, about 16 minutes away, while the team's faded badge heads south-east from Oudenaarde on the course">
+  <img src="docs/screenshot-bus-phone.png" width="24%" alt="The same moment on a phone: Sam on the bus to the team hotel in Ghent">
+</p>
+
+<p>
+  <img src="docs/screenshot-rest-desktop.png" width="72%" alt="The example page on a computer: Sam resting at the team hotel in Ghent with 3 h 45 min left, while the team's faded badge runs on through the night towards Geraardsbergen">
+  <img src="docs/screenshot-rest-phone.png" width="24%" alt="The same moment on a phone: Sam resting at the team hotel in Ghent">
+</p>
 
 The runner's badge on the map changes with what they are doing:
 
@@ -153,7 +166,7 @@ for example `"2027-05-15T09:00:00+02:00"`.
 | `sleep` | resting, usually at a hotel   | `at`                                         |
 | `free`  | anything else                 | `at` is optional                             |
 
-A place is `{ "name": "Aalter", "lat": 51.087, "lng": 3.4467 }`. The name can
+A place is `{ "name": "Kortrijk", "lat": 50.8279, "lng": 3.2649 }`. The name can
 differ by language: `"name": { "en": "Ghent", "de": "Gent" }`. Any segment can
 also have a `"label"` that replaces the text the page would write for it.
 
@@ -321,6 +334,14 @@ request can only be merged once they pass. GitHub's CodeQL scanning also
 checks every change. The repository also has a
 pre-push hook in `.githooks/` that runs it. Turn it on with
 `git config core.hooksPath .githooks`.
+
+The README's screenshots are of the example site, and `npm run screenshots`
+retakes them: every scene in `docs/screenshots/scenes.json`, on a computer and
+a phone, with Google Chrome against a pretend Chronorace feed. It needs a Maps
+key that allows `http://localhost:8765/`, given as `MAPS_API_KEY`. Sam's photo
+is by [@ernestflowerss](https://unsplash.com/@ernestflowerss) on
+[Unsplash](https://unsplash.com/photos/gnkt7eKNsCA), and the example course
+follows cycle routes from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 The page is plain ES modules with no bundler, served as they are.
 

@@ -51,6 +51,7 @@ import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
 import { DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress } from './ui/progress.js';
+import { RunnerSpot } from './ui/runner-spot.js';
 import { SchedulePanel } from './ui/schedule-panel.js';
 import { SheetDrag } from './ui/sheet-drag.js';
 import { StatusView } from './ui/status-view.js';
@@ -139,7 +140,8 @@ export async function boot(win, state = {}) {
   const realClock = { now: () => new win.Date(win.Date.now()) };
   const router = new RoadRouter(new GoogleDirections(maps, new maps.DirectionsService()), new JsonStorage(browserStorage(win)), realClock, win.console);
 
-  const layer = new CourseLayer(maps, map, theme, makePlaceLabel(maps, win.document));
+  const spot = new RunnerSpot();
+  const layer = new CourseLayer(maps, map, theme, makePlaceLabel(maps, win.document, spot));
   layer.draw(course.points);
   layer.labelStops(course.points, schedule.segments, (place) => localise(place.name, code));
 
@@ -149,7 +151,7 @@ export async function boot(win, state = {}) {
   const bibs = { runner: config.chronorace.runnerTracker, vehicle: config.chronorace.vehicleTracker };
   let view = null;
   const RunnerMarker = makeRunnerMarker(maps, win.document);
-  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => view.follow() });
+  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => view.follow(), spot });
   runnerMarker.setMap(map);
   const VehicleMarker = makeVehicleMarker(maps, win.document);
   const vehicleMarker = new VehicleMarker(`${badges.drive} ${words.vehicle}`);

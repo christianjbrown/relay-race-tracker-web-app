@@ -15,7 +15,8 @@
     "trackers": "node tools/list-trackers.js",
     "preview": "sirv dist --port 8765 --dev",
     "ci": "npm run lint && npm test && node tools/build.js --config example-config --out dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "screenshots": "node docs/screenshots/take.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

@@ -194,7 +194,7 @@ describe('boot', () => {
   });
 
   it('requests a live route while driving, and wires up the runner click and the sheet grip', async () => {
-    const targetIso = '2027-05-15T11:00:00+02:00';
+    const targetIso = '2027-05-15T12:00:00+02:00';
     const routeCalls = [];
     const maps = readyMaps();
     maps.DirectionsService.answer = (ask) => {
@@ -215,13 +215,13 @@ describe('boot', () => {
       if (String(url).includes('/api/gps/get/0')) {
         return jsonResponse({
           d1: { Lat: 51.2, Lon: 2.9, Time: new Date().toISOString() },
-          d2: { Lat: 51.19, Lon: 3.02, Time: targetIso },
+          d2: { Lat: 50.95, Lon: 2.87, Time: targetIso },
         });
       }
       return baseFetch(url);
     });
 
-    const win = makeWin({ search: '?at=2027-05-15T11:00', fetch, innerWidth: 400 });
+    const win = makeWin({ search: '?at=2027-05-15T12:00', fetch, innerWidth: 400 });
     const bootPromise = boot(win);
     await completeMapLoad(win, maps);
     await bootPromise;
