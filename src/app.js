@@ -22,6 +22,7 @@ export class App {
     this.painter = deps.painter;
     this.card = deps.card;
     this.runnerMarker = deps.runnerMarker;
+    this.badgeChoice = deps.badgeChoice;
     this.vehicleMarker = deps.vehicleMarker;
     this.group = deps.group;
     this.groupMarker = deps.groupMarker;
@@ -87,8 +88,7 @@ export class App {
     const incoming = this.incoming.place(act, runner, now);
     this.timePace(act, incoming, Boolean(runner?.projected));
     const fix = this.locator.where(act, this.live(now));
-    const badge = { finished: 'finished', waiting: 'drive', before: null }[act.state] ?? act.kind;
-    this.runnerMarker.update(fix, badge, this.birthday.on(now));
+    this.runnerMarker.update(fix, this.badgeChoice.of(act), this.birthday.on(now));
     const vehicle = this.poller.liveVehicle(now, this.tuning.staleMs);
     // Only where it really is - an estimated vehicle would be a guess on a
     // guess - and not while the runner is out on a leg without it.
