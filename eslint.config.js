@@ -14,5 +14,5 @@ export default [
   },
   // The page runs in the browser, and reaches browser globals only through boot.js's window.
   { files: ['src/**/*.js'], languageOptions: { globals: { ...globals.browser } } },
-  { files: ['tools/**/*.js', 'test/**/*.js', '*.config.js'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
+  { files: ['tools/**/*.js', 'test/**/*.js', 'docs/**/*.mjs', '*.config.js'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
 ];

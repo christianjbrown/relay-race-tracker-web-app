@@ -1,0 +1,49 @@
+{
+  "config": "example-config",
+  "devices": {
+    "desktop": {
+      "width": 1600,
+      "height": 1000,
+      "scale": 1,
+      "mobile": false
+    },
+    "phone": {
+      "width": 390,
+      "height": 844,
+      "scale": 2,
+      "mobile": true
+    }
+  },
+  "scenes": [
+    {
+      "name": "run",
+      "about": "Sam on leg 4, Leuven to Kortenberg, with most of the relay behind them",
+      "at": "2027-05-16T11:50",
+      "teamKm": 257.6,
+      "vehicle": {
+        "lat": 50.88707,
+        "lng": 4.53939
+      }
+    },
+    {
+      "name": "bus",
+      "about": "Sam on the bus to the team hotel in Antwerp, while the team runs on past Oudenaarde",
+      "at": "2027-05-15T22:12",
+      "teamKm": 127.2,
+      "vehicle": {
+        "lat": 51.14879,
+        "lng": 4.20009
+      }
+    },
+    {
+      "name": "rest",
+      "about": "Sam resting in Antwerp while the team runs through the night towards Ghent",
+      "at": "2027-05-15T23:15",
+      "teamKm": 137.3,
+      "vehicle": {
+        "lat": 51.2139,
+        "lng": 4.4197
+      }
+    }
+  ]
+}
