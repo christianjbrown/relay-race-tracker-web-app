@@ -13,6 +13,7 @@ import { DriveGuess, Estimator, RunGuess, StopGuess } from './domain/estimator.j
 import { decodePolyline } from './domain/geo.js';
 import { HandoverSpotter } from './domain/handover-spotter.js';
 import { HandoverWait } from './domain/handover-wait.js';
+import { IncomingRunner } from './domain/incoming-runner.js';
 import { Journey } from './domain/journey.js';
 import { DrivePieces, RunPieces, StopPieces } from './domain/journey-pieces.js';
 import { LegFinish } from './domain/leg-finish.js';
@@ -164,6 +165,7 @@ export async function boot(win, state = {}) {
     handovers,
     pace,
     legFinish: new LegFinish(course, pace),
+    incoming: new IncomingRunner(schedule, course, tuning),
     locator: new RunnerLocator(schedule, course),
     journey: new Journey(schedule, {
       run: new RunPieces(course),

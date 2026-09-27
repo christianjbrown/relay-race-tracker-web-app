@@ -16,6 +16,7 @@ function makeApp(overrides = {}) {
     handovers: { parked: vi.fn(() => false), still: false },
     pace: { kmh: vi.fn(() => 10), follow: vi.fn(), observe: vi.fn() },
     legFinish: { at: vi.fn(() => 'finish-info') },
+    incoming: { place: vi.fn(() => null), arrival: vi.fn(() => 'handover-info') },
     locator: { where: vi.fn(() => ({ lat: 1, lng: 2 })) },
     journey: { pieces: vi.fn(() => ['piece']) },
     eta: { estimate: vi.fn(() => 'eta-info') },
@@ -219,6 +220,28 @@ describe('App', () => {
       app.render();
       expect(deps.eta.estimate).not.toHaveBeenCalled();
       expect(deps.card.render.mock.calls[0][3]).toBeNull();
+    });
+
+    it('times the runner coming in while driving to a leg', () => {
+      const runner = { time: new Date('2027-05-15T09:59:00Z') };
+      const place = { leg: 'the-leg', index: 4, at: 2 };
+      const { app, deps } = makeApp({
+        poller: { poll: vi.fn(), liveVehicle: vi.fn(() => null), liveRunner: vi.fn(() => runner), live: {}, fillGuesses: vi.fn() },
+        activity: { at: vi.fn(() => ({ kind: 'drive', state: 'planned', index: 3, at: null })) },
+        incoming: { place: vi.fn(() => place), arrival: vi.fn(() => 'handover-info') },
+      });
+      app.render();
+      expect(deps.pace.follow).toHaveBeenCalledWith('4:incoming');
+      expect(deps.pace.observe).toHaveBeenCalledWith(runner.time.getTime(), 2);
+      expect(deps.incoming.arrival).toHaveBeenCalledWith(place, 10);
+      expect(deps.card.render.mock.calls[0][5]).toBe('handover-info');
+    });
+
+    it('has no handover time when no runner is coming in', () => {
+      const { app, deps } = makeApp();
+      app.render();
+      expect(deps.incoming.arrival).not.toHaveBeenCalled();
+      expect(deps.card.render.mock.calls[0][5]).toBeNull();
     });
 
     it('has no trip when not driving', () => {

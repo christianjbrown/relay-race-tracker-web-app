@@ -57,4 +57,29 @@ describe('Card', () => {
     card.render(now, {}, act, { arrival }, null);
     expect(views.calls.next[2]).toBe(arrival);
   });
+
+  it('waits for the runner coming in when they will reach the leg after the vehicle', () => {
+    const views = fakeViews();
+    const now = new Date();
+    const arrival = new Date(now.getTime() + 2000);
+    const handover = new Date(now.getTime() + 5000);
+    new Card(views).render(now, {}, { wait: null }, { arrival }, null, handover);
+    expect(views.calls.next[2]).toEqual(handover);
+  });
+
+  it('keeps the vehicle arrival when the runner coming in will be there first', () => {
+    const views = fakeViews();
+    const now = new Date();
+    const arrival = new Date(now.getTime() + 5000);
+    new Card(views).render(now, {}, { wait: null }, { arrival }, null, new Date(now.getTime() + 2000));
+    expect(views.calls.next[2]).toEqual(arrival);
+  });
+
+  it('uses the handover alone before the vehicle has an arrival', () => {
+    const views = fakeViews();
+    const now = new Date();
+    const handover = new Date(now.getTime() + 5000);
+    new Card(views).render(now, {}, { wait: null }, null, null, handover);
+    expect(views.calls.next[2]).toEqual(handover);
+  });
 });
