@@ -58,7 +58,6 @@ export default {
       schedule: 'Schedule',
       sheet: 'Show or hide the details',
       vehicle: v.noun,
-      group: 'On the course',
       scheduleTitle: (zone) => `Schedule (${zone})`,
       mapLabel: `Map showing where ${name} is`,
       // For the page's metadata and the picture a shared link shows.

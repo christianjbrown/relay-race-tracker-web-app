@@ -124,7 +124,7 @@ describe('makeVehicleMarker', () => {
 
   it('takes a class of its own, for the rest of the team', () => {
     const VehicleMarker = makeVehicleMarker(fakeMaps(), document);
-    expect(new VehicleMarker('🏃 On the course', 'group-marker').el.className).toBe('group-marker');
+    expect(new VehicleMarker('🏃', 'group-marker').el.className).toBe('group-marker');
     expect(new VehicleMarker('bus').el.className).toBe('vehicle-marker');
   });
 

@@ -154,7 +154,7 @@ export async function boot(win, state = {}) {
   const VehicleMarker = makeVehicleMarker(maps, win.document);
   const vehicleMarker = new VehicleMarker(`${badges.drive} ${words.vehicle}`);
   vehicleMarker.setMap(map);
-  const groupMarker = new VehicleMarker(`${badges.run} ${words.group}`, 'group-marker');
+  const groupMarker = new VehicleMarker(badges.run, 'group-marker');
   groupMarker.setMap(map);
 
   const app = new App({

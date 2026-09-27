@@ -60,7 +60,6 @@ export default {
       schedule: 'Zeitplan',
       sheet: 'Details ein- oder ausblenden',
       vehicle: v.noun,
-      group: 'Auf der Strecke',
       scheduleTitle: (zone) => `Zeitplan (${zone})`,
       mapLabel: `Karte mit ${genitive(name)} Position`,
       description: (event, from, to) => `${name} live verfolgen beim ${event}, von ${from} nach ${to}: jede Etappe, jede Fahrt, jeder Halt.`,
