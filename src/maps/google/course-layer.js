@@ -9,7 +9,7 @@ export class CourseLayer {
 
   draw(points) {
     const t = this.theme;
-    new this.maps.Polyline({ map: this.map, path: points, strokeColor: t.course, strokeWeight: 3, strokeOpacity: 0.6, zIndex: 1, clickable: false });
+    new this.maps.Polyline({ map: this.map, path: points, strokeColor: t.course, strokeWeight: 3, strokeOpacity: 0.85, zIndex: 1, clickable: false });
     const end = (position, label) => new this.maps.Marker({
       map: this.map,
       position,

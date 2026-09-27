@@ -25,6 +25,7 @@ function makeApp(overrides = {}) {
     painter: { paint: vi.fn() },
     card: { render: vi.fn() },
     runnerMarker: { update: vi.fn() },
+    badgeChoice: { of: vi.fn(() => 'badge') },
     vehicleMarker: { update: vi.fn() },
     group: { where: vi.fn(() => null) },
     groupMarker: { update: vi.fn() },
@@ -188,22 +189,12 @@ describe('App', () => {
       expect(deps.card.render).toHaveBeenCalled();
     });
 
-    it('maps a finished activity to the finished badge', () => {
-      const { app, deps } = makeApp({ activity: { at: vi.fn(() => ({ kind: 'run', state: 'finished', index: 0, at: null })) } });
+    it('puts the badge the choice gives for the activity on the runner', () => {
+      const act = { kind: 'sleep', state: 'planned', index: 0, at: null };
+      const { app, deps } = makeApp({ activity: { at: vi.fn(() => act) } });
       app.render();
-      expect(deps.runnerMarker.update).toHaveBeenCalledWith(expect.anything(), 'finished', false);
-    });
-
-    it('maps a waiting activity to the drive badge', () => {
-      const { app, deps } = makeApp({ activity: { at: vi.fn(() => ({ kind: 'run', state: 'waiting', index: 0, at: null })) } });
-      app.render();
-      expect(deps.runnerMarker.update).toHaveBeenCalledWith(expect.anything(), 'drive', false);
-    });
-
-    it('falls back to the activity kind for any other state', () => {
-      const { app, deps } = makeApp({ activity: { at: vi.fn(() => ({ kind: 'sleep', state: 'active', index: 0, at: null })) } });
-      app.render();
-      expect(deps.runnerMarker.update).toHaveBeenCalledWith(expect.anything(), 'sleep', false);
+      expect(deps.badgeChoice.of).toHaveBeenCalledWith(act);
+      expect(deps.runnerMarker.update).toHaveBeenCalledWith(expect.anything(), 'badge', false);
     });
 
     it('hides the vehicle while the runner is on a leg without it', () => {

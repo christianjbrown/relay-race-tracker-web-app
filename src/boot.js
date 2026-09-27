@@ -41,6 +41,7 @@ import { JsonStorage } from './services/json-storage.js';
 import { PageClock } from './services/page-clock.js';
 import { RoadRouter } from './services/road-router.js';
 import { TrackerPoller } from './services/tracker-poller.js';
+import { BadgeChoice } from './ui/badge-choice.js';
 import { makeBadges } from './ui/badges.js';
 import { Birthday } from './ui/birthday.js';
 import { Card } from './ui/card.js';
@@ -185,6 +186,7 @@ export async function boot(win, state = {}) {
     painter: new Painter(maps, map, theme, config.colours),
     card,
     runnerMarker,
+    badgeChoice: new BadgeChoice(),
     vehicleMarker,
     group: new RunningGroup(tuning),
     groupMarker,
