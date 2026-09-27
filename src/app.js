@@ -14,6 +14,7 @@ export class App {
     this.pace = deps.pace;
     this.legFinish = deps.legFinish;
     this.incoming = deps.incoming;
+    this.projection = deps.projection;
     this.locator = deps.locator;
     this.journey = deps.journey;
     this.eta = deps.eta;
@@ -51,7 +52,7 @@ export class App {
   now(now = this.clock.now()) {
     const vehicle = this.poller.liveVehicle(now, this.tuning.staleMs);
     return this.activity.at(now, {
-      runner: this.poller.liveRunner(),
+      runner: this.runner(now),
       vehicleWaiting: vehicle && this.handovers.parked(vehicle, now) ? vehicle : null,
       // Parked only once two polls agree it has not moved; until then, as
       // far as arriving goes, it may still be driving.
@@ -62,16 +63,28 @@ export class App {
 
   /** Where the runner is now. */
   where() {
-    return this.locator.where(this.now(), this.poller.live);
+    const now = this.clock.now();
+    return this.locator.where(this.now(now), this.live(now));
+  }
+
+  /** The runner tracker's fix, carried on along the course while it is quiet. */
+  runner(now) {
+    return this.projection.of(this.poller.liveRunner(), now, this.pace.kmh(this.tuning.jogKmh));
+  }
+
+  /** Both trackers, with the runner's as projected when it is quiet. */
+  live(now) {
+    return { ...this.poller.live, runner: this.runner(now) ?? this.poller.live.runner };
   }
 
   render() {
     const now = this.clock.now();
     this.poller.fillGuesses(this.estimator.at(now));
     const act = this.now(now);
-    const incoming = this.incoming.place(act, this.poller.liveRunner(), now);
-    this.timePace(act, incoming);
-    const fix = this.locator.where(act, this.poller.live);
+    const runner = this.runner(now);
+    const incoming = this.incoming.place(act, runner, now);
+    this.timePace(act, incoming, Boolean(runner?.projected));
+    const fix = this.locator.where(act, this.live(now));
     const badge = { finished: 'finished', waiting: 'drive', before: null }[act.state] ?? act.kind;
     this.runnerMarker.update(fix, badge, this.birthday.on(now));
     const vehicle = this.poller.liveVehicle(now, this.tuning.staleMs);
@@ -91,12 +104,14 @@ export class App {
    * while ours waits or is driven to the leg. The drive and the wait time the
    * same runner, so the pace carries on from one into the other.
    */
-  timePace(act, incoming = null) {
+  timePace(act, incoming = null, projected = false) {
     const onLeg = act.kind === 'run';
     const stint = onLeg ? `${act.index}:${act.state === 'waiting' ? 'incoming' : 'ours'}` : incoming && `${incoming.index}:incoming`;
     this.pace.follow(stint ?? null);
     const at = onLeg ? act.at : incoming?.at;
+    // Only a real fix says how fast they are going; a projected one would
+    // only repeat the pace it was projected at.
     const runner = this.poller.liveRunner();
-    if (at != null && runner) this.pace.observe(runner.time.getTime(), this.course.km[at]);
+    if (at != null && runner && !projected) this.pace.observe(runner.time.getTime(), this.course.km[at]);
   }
 }

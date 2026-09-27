@@ -21,6 +21,7 @@ import { LegPlacer } from './domain/leg-placer.js';
 import { LegProgress } from './domain/leg-progress.js';
 import { RunnerLocator } from './domain/runner-locator.js';
 import { RunnerPace } from './domain/runner-pace.js';
+import { RunnerProjection } from './domain/runner-projection.js';
 import { Schedule } from './domain/schedule.js';
 import { Formats } from './i18n/formats.js';
 import { localise, pickLanguage, preferredLanguages } from './i18n/language.js';
@@ -166,6 +167,7 @@ export async function boot(win, state = {}) {
     pace,
     legFinish: new LegFinish(course, pace),
     incoming: new IncomingRunner(schedule, course, tuning),
+    projection: new RunnerProjection(schedule, course, tuning),
     locator: new RunnerLocator(schedule, course),
     journey: new Journey(schedule, {
       run: new RunPieces(course),

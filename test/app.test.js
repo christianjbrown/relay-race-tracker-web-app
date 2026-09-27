@@ -17,6 +17,7 @@ function makeApp(overrides = {}) {
     pace: { kmh: vi.fn(() => 10), follow: vi.fn(), observe: vi.fn() },
     legFinish: { at: vi.fn(() => 'finish-info') },
     incoming: { place: vi.fn(() => null), arrival: vi.fn(() => 'handover-info') },
+    projection: { of: vi.fn((fix) => fix) },
     locator: { where: vi.fn(() => ({ lat: 1, lng: 2 })) },
     journey: { pieces: vi.fn(() => ['piece']) },
     eta: { estimate: vi.fn(() => 'eta-info') },
@@ -144,6 +145,35 @@ describe('App', () => {
       const result = app.where();
       expect(deps.locator.where).toHaveBeenCalledWith(expect.anything(), deps.poller.live);
       expect(result).toEqual({ lat: 1, lng: 2 });
+    });
+  });
+
+  describe('a quiet runner tracker', () => {
+    const real = { lat: 1, lng: 1, time: new Date('2027-05-15T09:40:00Z') };
+    const projected = { lat: 2, lng: 2, time: new Date('2027-05-15T10:00:00Z'), projected: { since: real.time, kmh: 10 } };
+    const quiet = () => makeApp({
+      poller: { poll: vi.fn(), liveVehicle: vi.fn(() => null), liveRunner: vi.fn(() => real), live: { runner: real, vehicle: 'v' }, fillGuesses: vi.fn() },
+      activity: { at: vi.fn(() => ({ kind: 'run', state: 'running', index: 4, at: 2 })) },
+      projection: { of: vi.fn(() => projected) },
+    });
+
+    it('is carried on at the pace the page has seen', () => {
+      const { app, deps } = quiet();
+      app.now();
+      expect(deps.projection.of).toHaveBeenCalledWith(real, expect.any(Date), 10);
+      expect(deps.activity.at.mock.calls[0][1].runner).toBe(projected);
+    });
+
+    it('puts the runner where the projection says', () => {
+      const { app, deps } = quiet();
+      app.where();
+      expect(deps.locator.where).toHaveBeenCalledWith(expect.anything(), { runner: projected, vehicle: 'v' });
+    });
+
+    it('does not time the pace from a projected position', () => {
+      const { app, deps } = quiet();
+      app.render();
+      expect(deps.pace.observe).not.toHaveBeenCalled();
     });
   });
 

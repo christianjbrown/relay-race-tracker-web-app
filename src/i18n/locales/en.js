@@ -52,6 +52,7 @@ export default {
       noFix: 'No GPS position yet',
       retrying: 'The map did not load – trying again…',
       estimated: 'Can’t reach Chronorace right now – position estimated from the timeline',
+      projected: (since, kmh) => `Runner tracker quiet since ${since} – position projected at ${kmh} km/h`,
       follow: `Follow ${name}`,
       overview: 'Whole route',
       schedule: 'Schedule',
