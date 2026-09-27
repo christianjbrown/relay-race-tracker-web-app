@@ -1,12 +1,12 @@
 {
   "name": "Sam",
   "emoji": "🏃",
-  "birthday": "05-16",
+  "birthday": "05-20",
   "vehicle": "bus",
   "languages": ["en", "de"],
   "timezone": "Europe/Brussels",
   "event": {
-    "name": "Example Coast Relay 2027",
+    "name": "Example Flanders Relay 2027",
     "from": { "en": "Ostend", "de": "Ostende" },
     "to": { "en": "Brussels", "de": "Brüssel" }
   },
