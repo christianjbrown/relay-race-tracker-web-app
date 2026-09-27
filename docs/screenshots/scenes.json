@@ -18,8 +18,8 @@
     {
       "name": "run",
       "about": "Sam on leg 4, Leuven to Kortenberg, with most of the relay behind them",
-      "at": "2027-05-16T11:50",
-      "teamKm": 257.6,
+      "at": "2027-05-16T11:35",
+      "teamKm": 250.9,
       "vehicle": {
         "lat": 50.88707,
         "lng": 4.53939
@@ -27,22 +27,22 @@
     },
     {
       "name": "bus",
-      "about": "Sam on the bus to the team hotel in Antwerp, while the team runs on past Oudenaarde",
-      "at": "2027-05-15T22:12",
-      "teamKm": 127.2,
+      "about": "Sam on the bus north to the team hotel in Ghent, while the team runs on south-east from Oudenaarde",
+      "at": "2027-05-15T21:45",
+      "teamKm": 123,
       "vehicle": {
-        "lat": 51.14879,
-        "lng": 4.20009
+        "lat": 51.01346,
+        "lng": 3.72827
       }
     },
     {
       "name": "rest",
-      "about": "Sam resting in Antwerp while the team runs through the night towards Ghent",
-      "at": "2027-05-15T23:15",
-      "teamKm": 137.3,
+      "about": "Sam resting in Ghent while the team runs through the night towards Geraardsbergen",
+      "at": "2027-05-16T01:00",
+      "teamKm": 152.6,
       "vehicle": {
-        "lat": 51.2139,
-        "lng": 4.4197
+        "lat": 51.0561,
+        "lng": 3.7305
       }
     }
   ]

@@ -28,8 +28,8 @@ tracking feed that Chronorace's own tracking page reads, which is not a
 documented API and could change.
 
 <p>
-  <img src="docs/screenshot-run-desktop.png" width="72%" alt="The example page on a computer: Sam on leg 4 from Leuven to Kortenberg with 6.1 km to go, on a dark map of the whole relay from Ostend round Flanders to Brussels, most of it already done">
-  <img src="docs/screenshot-run-phone.png" width="24%" alt="The same moment on a phone: Sam on leg 4 with 6.1 km to go">
+  <img src="docs/screenshot-run-desktop.png" width="72%" alt="The example page on a computer: Sam on leg 4 from Leuven to Kortenberg with 5.2 km to go, on a dark map of the whole relay from Ostend round Flanders to Brussels, most of it already done">
+  <img src="docs/screenshot-run-phone.png" width="24%" alt="The same moment on a phone: Sam on leg 4 with 5.2 km to go">
 </p>
 
 ⚠️ **Ask first.** This page shows a real person's live location to anyone with
@@ -55,13 +55,13 @@ On the bus to the hotel, and resting there, with the rest of the team still
 out on the course:
 
 <p>
-  <img src="docs/screenshot-bus-desktop.png" width="72%" alt="The example page on a computer: Sam on the bus to the team hotel in Antwerp, about 39 minutes away, while the team's faded badge is back near Oudenaarde">
-  <img src="docs/screenshot-bus-phone.png" width="24%" alt="The same moment on a phone: Sam on the bus to the team hotel in Antwerp">
+  <img src="docs/screenshot-bus-desktop.png" width="72%" alt="The example page on a computer: Sam on the bus north to the team hotel in Ghent, about 16 minutes away, while the team's faded badge heads south-east from Oudenaarde on the course">
+  <img src="docs/screenshot-bus-phone.png" width="24%" alt="The same moment on a phone: Sam on the bus to the team hotel in Ghent">
 </p>
 
 <p>
-  <img src="docs/screenshot-rest-desktop.png" width="72%" alt="The example page on a computer: Sam resting at the team hotel in Antwerp with 6 hours left, while the team's faded badge runs on through the night south of Ghent">
-  <img src="docs/screenshot-rest-phone.png" width="24%" alt="The same moment on a phone: Sam resting at the team hotel in Antwerp">
+  <img src="docs/screenshot-rest-desktop.png" width="72%" alt="The example page on a computer: Sam resting at the team hotel in Ghent with 3 h 45 min left, while the team's faded badge runs on through the night towards Geraardsbergen">
+  <img src="docs/screenshot-rest-phone.png" width="24%" alt="The same moment on a phone: Sam resting at the team hotel in Ghent">
 </p>
 
 The runner's badge on the map changes with what they are doing:
