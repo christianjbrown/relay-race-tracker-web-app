@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from 'vitest';
 import { makePlaceLabel, makeRunnerMarker, makeVehicleMarker } from '../../../src/maps/google/overlays.js';
+import { RunnerSpot } from '../../../src/ui/runner-spot.js';
 import { fakeMaps, flatProjection } from '../../fakes/google-maps.js';
 
 function fakeMap(maps, { projection = flatProjection, zoom = 10, width = 1000 } = {}) {
@@ -28,6 +29,18 @@ describe('makeRunnerMarker', () => {
 
     marker.setMap(null);
     expect(marker.el.parentNode).toBeNull();
+  });
+
+  it('tells the spot where the runner has moved to', () => {
+    const maps = fakeMaps();
+    const RunnerMarker = makeRunnerMarker(maps, document);
+    const spot = new RunnerSpot();
+    const marker = new RunnerMarker({ avatar: 'a.png', alt: 'Sam', colours: { run: '#000' }, badges: { run: 'R' }, onClick: () => {}, spot });
+    marker.setMap(fakeMap(maps));
+
+    marker.update({ lat: 1, lng: 2 }, 'run', false);
+
+    expect(spot.pos).toEqual({ lat: 1, lng: 2 });
   });
 
   it('shows the avatar and calls onClick when clicked', () => {
@@ -225,5 +238,40 @@ describe('makePlaceLabel', () => {
 
     expect(label.el.classList.contains('right')).toBe(true);
     expect(label.el.classList.contains('left')).toBe(false);
+  });
+
+  it('steps out past the runner while they are at the stop, and back once they leave', () => {
+    const maps = fakeMaps();
+    const spot = new RunnerSpot();
+    const PlaceLabel = makePlaceLabel(maps, document, spot);
+    const map = fakeMap(maps, { width: 2000 });
+    const label = new PlaceLabel({ lat: 0, lng: 5 }, 'Hotel', 'right');
+    Object.defineProperty(label.el, 'offsetWidth', { value: 40, configurable: true });
+    label.setMap(map);
+
+    spot.moveTo({ lat: 0, lng: 5.1 });
+    expect(label.el.classList.contains('clear')).toBe(true);
+
+    spot.moveTo({ lat: 0, lng: 6 });
+    expect(label.el.classList.contains('clear')).toBe(false);
+
+    spot.moveTo(null);
+    expect(label.el.classList.contains('clear')).toBe(false);
+  });
+
+  it('counts the step out when deciding whether it fits on its side', () => {
+    const maps = fakeMaps();
+    const spot = new RunnerSpot();
+    const PlaceLabel = makePlaceLabel(maps, document, spot);
+    const map = fakeMap(maps, { width: 2000 });
+    const label = new PlaceLabel({ lat: 0, lng: 19.2 }, 'Hotel', 'right');
+    Object.defineProperty(label.el, 'offsetWidth', { value: 40, configurable: true });
+    label.setMap(map);
+
+    label.draw();
+    expect(label.el.classList.contains('right')).toBe(true);
+
+    spot.moveTo({ lat: 0, lng: 19.2 });
+    expect(label.el.classList.contains('left')).toBe(true);
   });
 });

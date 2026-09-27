@@ -19,9 +19,10 @@ function place(overlay, el, pos) {
 /** The runner on the map: their face, with a badge for what they are doing and a cake on their birthday. */
 export function makeRunnerMarker(maps, doc) {
   return class RunnerMarker extends maps.OverlayView {
-    constructor({ avatar, alt, colours, badges, onClick }) {
+    constructor({ avatar, alt, colours, badges, onClick, spot = null }) {
       super();
       this.maps = maps;
+      this.spot = spot;
       this.colours = colours;
       this.badges = badges;
       this.pos = null;
@@ -51,6 +52,7 @@ export function makeRunnerMarker(maps, doc) {
     /** `badge` is a key of the badges ('run', 'finished', ...) or null for none. */
     update(pos, badge, birthday) {
       this.pos = pos;
+      this.spot?.moveTo(pos);
       this.cake.hidden = !birthday;
       this.badge.hidden = !badge;
       if (badge) {
@@ -93,13 +95,22 @@ export function makeVehicleMarker(maps, doc) {
 
 const NARROW_PX = 720;
 const LABELS_FROM_ZOOM = 8;
+// The runner's face is 64px across with its badge reaching 10px past it, so
+// a name this close to the runner steps out (by the CSS's .clear) past both.
+const CLEAR_PX = 40;
+const CLEAR_EXTRA_PX = 32;
 
-/** A stop's name beside it, on whichever side keeps it on the map. */
-export function makePlaceLabel(maps, doc) {
+/**
+ * A stop's name beside it, on whichever side keeps it on the map, and
+ * stepped further out while the runner is at the stop. `spot` is where the
+ * runner is.
+ */
+export function makePlaceLabel(maps, doc, spot = null) {
   return class PlaceLabel extends maps.OverlayView {
     constructor(pos, text, side) {
       super();
       this.maps = maps;
+      spot?.watch(() => this.draw());
       this.pos = pos;
       this.side = side;
       this.el = doc.createElement('div');
@@ -118,14 +129,25 @@ export function makePlaceLabel(maps, doc) {
       // On a phone the whole route is too small for the names to sit beside
       // it without covering it; they appear once you zoom in.
       this.el.hidden = width < NARROW_PX && this.getMap().getZoom() < LABELS_FROM_ZOOM;
+      const clear = this.runnerNear(placed.projection);
+      this.el.classList.toggle('clear', clear);
       // Flip to the other side when the preferred one would run off the map.
       const x = placed.projection.fromLatLngToContainerPixel(placed.at).x;
-      const need = this.el.offsetWidth + 22;
+      const need = this.el.offsetWidth + 22 + (clear ? CLEAR_EXTRA_PX : 0);
       let side = this.side;
       if (side === 'right' && x + need > width) side = 'left';
       else if (side === 'left' && x - need < 0) side = 'right';
       this.el.classList.toggle('left', side === 'left');
       this.el.classList.toggle('right', side === 'right');
+    }
+
+    /** Whether the runner's face is on top of this stop. */
+    runnerNear(projection) {
+      if (!spot?.pos) return false;
+      const px = (p) => projection.fromLatLngToDivPixel(new this.maps.LatLng(p.lat, p.lng));
+      const a = px(this.pos);
+      const b = px(spot.pos);
+      return Math.hypot(a.x - b.x, a.y - b.y) < CLEAR_PX;
     }
   };
 }
