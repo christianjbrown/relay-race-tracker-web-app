@@ -21,6 +21,7 @@ import { LegPlacer } from './domain/leg-placer.js';
 import { LegProgress } from './domain/leg-progress.js';
 import { RunnerLocator } from './domain/runner-locator.js';
 import { RunnerPace } from './domain/runner-pace.js';
+import { RunningGroup } from './domain/running-group.js';
 import { RunnerProjection } from './domain/runner-projection.js';
 import { Schedule } from './domain/schedule.js';
 import { Formats } from './i18n/formats.js';
@@ -153,6 +154,8 @@ export async function boot(win, state = {}) {
   const VehicleMarker = makeVehicleMarker(maps, win.document);
   const vehicleMarker = new VehicleMarker(`${badges.drive} ${words.vehicle}`);
   vehicleMarker.setMap(map);
+  const groupMarker = new VehicleMarker(badges.run, 'group-marker');
+  groupMarker.setMap(map);
 
   const app = new App({
     clock,
@@ -181,6 +184,8 @@ export async function boot(win, state = {}) {
     card,
     runnerMarker,
     vehicleMarker,
+    group: new RunningGroup(tuning),
+    groupMarker,
     birthday,
     tuning,
     timers: win,

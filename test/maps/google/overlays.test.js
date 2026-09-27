@@ -122,6 +122,12 @@ describe('makeVehicleMarker', () => {
     expect(marker.el.style.top).toBe('200px');
   });
 
+  it('takes a class of its own, for the rest of the team', () => {
+    const VehicleMarker = makeVehicleMarker(fakeMaps(), document);
+    expect(new VehicleMarker('🏃', 'group-marker').el.className).toBe('group-marker');
+    expect(new VehicleMarker('bus').el.className).toBe('vehicle-marker');
+  });
+
   it('hides itself when given no position', () => {
     const maps = fakeMaps();
     const VehicleMarker = makeVehicleMarker(maps, document);

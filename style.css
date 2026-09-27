@@ -422,3 +422,23 @@ h1 {
 }
 
 .vehicle-marker[hidden] { display: none; }
+
+/* The rest of the team on the course: the avatar's badge on its own, faded, so it is never mistaken for the runner. */
+.group-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 2.5px var(--run);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.75;
+  filter: saturate(0.7);
+}
+
+.group-marker[hidden] { display: none; }

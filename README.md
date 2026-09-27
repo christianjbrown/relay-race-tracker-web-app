@@ -40,6 +40,8 @@ off (the default) unless they want the page to turn up in search engines.
 
 - The runner on a map, with a badge for what they are doing, and their
   vehicle as a separate tag when it has a live position.
+- While the runner rests, rides or waits, the rest of the team out on the
+  course, as a faded running badge wherever the runner tracker is.
 - Their whole route for the event. Each leg is drawn on the course, each drive
   on the road Google suggests, and each rest or free time as a stop. What is
   done is solid and what is still to come is dashed.
