@@ -7,6 +7,15 @@ const VEHICLES = {
 /** Names ending in an s sound take an apostrophe in the genitive; the rest take an s. */
 const genitive = (name) => (/(s|ß|x|z|ce)$/i.test(name) ? `${name}’` : `${name}s`);
 
+const unit = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+/** "3 Tage und 45 Minuten": the parts that are not nought, joined as a sentence would. */
+function span(d, h, m) {
+  const parts = [d && unit(d, 'Tag', 'Tage'), h && unit(h, 'Stunde', 'Stunden'), m && unit(m, 'Minute', 'Minuten')].filter(Boolean);
+  if (!parts.length) return unit(0, 'Minute', 'Minuten');
+  return parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} und ${parts.at(-1)}`;
+}
+
 /** German. Every string that names somebody takes the name it is given. */
 export default {
   code: 'de',
@@ -52,6 +61,10 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'Tracker evtl. aus',
       noFix: 'Noch keine GPS-Position',
+      congratulations: `Herzlichen Glückwunsch, ${name}!`,
+      teamRan: (km, time) => `Euer Team ist über ${time} hinweg ${km}\u00a0km gelaufen.`,
+      backToMap: 'Zurück zur Karte',
+      span,
       lookAround: `Tippe auf ${name} in der Karte, um dich in Street View umzusehen`,
       retrying: 'Die Karte hat nicht geladen – neuer Versuch …',
       estimated: 'Chronorace gerade nicht erreichbar – Position anhand des Zeitplans geschätzt',

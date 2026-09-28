@@ -4,6 +4,15 @@ const VEHICLES = {
   car: { noun: 'Car', aboard: 'in the car' },
 };
 
+const count = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
+
+/** "3 days and 45 minutes": the parts that are not nought, joined as a sentence would. */
+function span(d, h, m) {
+  const parts = [d && count(d, 'day'), h && count(h, 'hour'), m && count(m, 'minute')].filter(Boolean);
+  if (!parts.length) return count(0, 'minute');
+  return parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}`;
+}
+
 /** British English. Every string that names somebody takes the name it is given. */
 export default {
   code: 'en',
@@ -50,6 +59,10 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'the tracker may be off',
       noFix: 'No GPS position yet',
+      congratulations: `Congratulations, ${name}!`,
+      teamRan: (km, time) => `Your team ran ${km}\u00a0km across ${time}.`,
+      backToMap: 'Back to the map',
+      span,
       lookAround: `Tap ${name} on the map to look around in Street View`,
       retrying: 'The map did not load – trying again…',
       estimated: 'Can’t reach Chronorace right now – position estimated from the timeline',

@@ -26,6 +26,14 @@ describe.each(Object.values(LOCALES))('the $code locale', (locale) => {
     expect(words.nextUp('what', null)).not.toBe(words.nextUp('what', '10:00'));
   });
 
+  it('writes a long stretch of time from only the parts that are not nought', () => {
+    const { span } = locale.words({ name: 'Sam', vehicle: 'bus' });
+    expect(span(3, 0, 45)).toBe(locale.code === 'en' ? '3 days and 45 minutes' : '3 Tage und 45 Minuten');
+    expect(span(1, 1, 1)).toBe(locale.code === 'en' ? '1 day, 1 hour and 1 minute' : '1 Tag, 1 Stunde und 1 Minute');
+    expect(span(0, 2, 0)).toBe(locale.code === 'en' ? '2 hours' : '2 Stunden');
+    expect(span(0, 0, 0)).toBe(locale.code === 'en' ? '0 minutes' : '0 Minuten');
+  });
+
   it('names the three vehicles', () => {
     expect(locale.vehicles).toEqual(['bus', 'van', 'car']);
   });

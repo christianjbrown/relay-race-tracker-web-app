@@ -10,6 +10,7 @@ function fakeViews() {
     next: { render: (...a) => { calls.next = a; } },
     meta: { render: (...a) => { calls.meta = a; } },
     look: { render: (...a) => { calls.look = a; } },
+    celebration: { render: (...a) => { calls.celebration = a; } },
     timeline: { render: (...a) => { calls.timeline = a; } },
   };
 }
@@ -28,6 +29,7 @@ describe('Card', () => {
     expect(views.calls.meta).toEqual([now, fix, act]);
     expect(views.calls.look).toEqual([fix, act]);
     expect(views.calls.timeline).toEqual([act]);
+    expect(views.calls.celebration).toEqual([act]);
   });
 
   it('prefers a waiting eta for the next arrival', () => {
