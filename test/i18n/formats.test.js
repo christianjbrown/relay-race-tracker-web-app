@@ -16,6 +16,14 @@ describe('Formats', () => {
     expect(en.dayKey(d)).toBe('2027-05-15');
   });
 
+  it('rounds a total to the whole kilometre when it is within a tenth of one', () => {
+    expect(en.kmNearWhole(232.9)).toBe('233');
+    expect(en.kmNearWhole(100.1)).toBe('100');
+    expect(en.kmNearWhole(100.2)).toBe('100.2');
+    expect(en.kmNearWhole(99.8)).toBe('99.8');
+    expect(de.kmNearWhole(40.3)).toBe('40,3');
+  });
+
   it('writes a long stretch in days, hours and minutes', () => {
     expect(en.span((3 * 1440 + 45) * 60000)).toBe('3 days');
     expect(en.span((3 * 1440 + 150) * 60000)).toBe('3 days and 2 hours');

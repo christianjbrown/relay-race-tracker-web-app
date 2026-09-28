@@ -32,67 +32,17 @@ function makeApp(overrides = {}) {
     groupMarker: { update: vi.fn() },
     birthday: { on: vi.fn(() => false) },
     tuning: { pollMs: 5000, staleMs: 60000, jogKmh: 8 },
-    timers: { setInterval: vi.fn() },
     ...overrides,
   };
   return { app: new App(deps), deps };
 }
 
 describe('App', () => {
-  describe('attach', () => {
-    it('stores the view and the sheet', () => {
-      const { app } = makeApp();
-      const view = {};
-      const sheet = {};
-      app.attach(view, sheet);
-      expect(app.view).toBe(view);
-      expect(app.sheet).toBe(sheet);
-    });
-  });
-
-  describe('run', () => {
-    it('polls and redraws on their own intervals', async () => {
-      const { app, deps } = makeApp();
-      app.run();
-      expect(deps.timers.setInterval).toHaveBeenCalledTimes(2);
-      expect(deps.timers.setInterval.mock.calls[0][1]).toBe(5000);
-      expect(deps.timers.setInterval.mock.calls[1][1]).toBe(30000);
-
-      await deps.timers.setInterval.mock.calls[0][0]();
-      expect(deps.poller.poll).toHaveBeenCalled();
-
-      deps.timers.setInterval.mock.calls[1][0]();
-      expect(deps.card.render).toHaveBeenCalled();
-    });
-  });
-
   describe('poll', () => {
-    it('polls, renders and recentres a following view', async () => {
+    it('asks the trackers where everyone is', async () => {
       const { app, deps } = makeApp();
-      app.attach({ following: () => true, centre: vi.fn() }, null);
-      const centre = vi.fn();
-      app.view.centre = centre;
-
-      await app.poll();
-
-      expect(deps.poller.poll).toHaveBeenCalled();
-      expect(deps.card.render).toHaveBeenCalled();
-      expect(centre).toHaveBeenCalled();
-    });
-
-    it('does not recentre a view that is not following', async () => {
-      const { app } = makeApp();
-      const centre = vi.fn();
-      app.attach({ following: () => false, centre }, null);
-
-      await app.poll();
-
-      expect(centre).not.toHaveBeenCalled();
-    });
-
-    it('works with no view attached at all', async () => {
-      const { app } = makeApp();
       await expect(app.poll()).resolves.toBeUndefined();
+      expect(deps.poller.poll).toHaveBeenCalled();
     });
   });
 
@@ -302,19 +252,6 @@ describe('App', () => {
       const { app, deps } = makeApp();
       app.render();
       expect(deps.card.render.mock.calls[0][3]).toBeNull();
-    });
-
-    it('refreshes an attached sheet', () => {
-      const { app } = makeApp();
-      const sheet = { refresh: vi.fn() };
-      app.attach(null, sheet);
-      app.render();
-      expect(sheet.refresh).toHaveBeenCalled();
-    });
-
-    it('does nothing when there is no attached sheet', () => {
-      const { app } = makeApp();
-      expect(() => app.render()).not.toThrow();
     });
   });
 

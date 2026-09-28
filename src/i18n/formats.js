@@ -57,6 +57,12 @@ export class Formats {
     return this.number.format(n);
   }
 
+  /** A total that reads better whole when it is within a tenth of a whole number: "233", "100", "100.4". */
+  kmNearWhole(n) {
+    const whole = Math.round(n);
+    return this.km(Math.abs(n - whole) <= 0.1 + 1e-9 ? whole : n);
+  }
+
   /** A distance with exactly one decimal, for a figure that counts down. */
   kmFixed(n) {
     return this.fixed.format(n);

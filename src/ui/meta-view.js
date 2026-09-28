@@ -17,12 +17,13 @@ export class MetaView {
     if (over) return;
     const stale = Boolean(fix && !fix.estimated && now - fix.time > this.staleMs);
     meta.textContent = this.text(now, fix, stale);
-    meta.classList.toggle('stale', stale || !fix || Boolean(fix.estimated || fix.projected));
+    meta.classList.toggle('stale', stale || !fix || Boolean(!fix.replayed && (fix.estimated || fix.projected)));
   }
 
   text(now, fix, stale) {
     const w = this.words;
     if (!fix) return w.noFix;
+    if (fix.replayed) return w.replaying;
     if (fix.estimated) return w.estimated;
     if (fix.projected) return w.projected(this.formats.when(fix.projected.since, now), this.formats.kmFixed(fix.projected.kmh));
     return w.lastFix(this.formats.ago(fix.time, now)) + (stale ? ` – ${w.stale}` : '');

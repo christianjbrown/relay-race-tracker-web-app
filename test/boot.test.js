@@ -237,6 +237,12 @@ describe('boot', () => {
     expect(runnerEl).toBeTruthy();
     expect(() => runnerEl.dispatchEvent(new Event('click'))).not.toThrow();
 
+    // Sliding the rewind redraws the page at that moment from the timeline.
+    const range = document.getElementById('rewind-range');
+    range.value = '0';
+    range.dispatchEvent(new Event('input'));
+    expect(document.getElementById('meta').textContent).toBe('Replaying the schedule: planned positions, not GPS');
+
     // Tapping the sheet's grip on a narrow layout moves it a level.
     const toggle = document.getElementById('toggle');
     toggle.setPointerCapture ??= () => {};

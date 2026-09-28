@@ -28,10 +28,12 @@ describe.each(Object.values(LOCALES))('the $code locale', (locale) => {
 
   it('writes a long stretch of time from only the parts that are not nought', () => {
     const { span } = locale.words({ name: 'Sam', vehicle: 'bus' });
-    expect(span(3, 0)).toBe(locale.code === 'en' ? '3 days' : '3 Tage');
-    expect(span(1, 1)).toBe(locale.code === 'en' ? '1 day and 1 hour' : '1 Tag und 1 Stunde');
-    expect(span(0, 2)).toBe(locale.code === 'en' ? '2 hours' : '2 Stunden');
-    expect(span(0, 0)).toBe(locale.code === 'en' ? '0 hours' : '0 Stunden');
+    const said = {
+      en: ['3 days', '1 day and 1 hour', '2 hours', '0 hours'],
+      de: ['3 Tage', '1 Tag und 1 Stunde', '2 Stunden', '0 Stunden'],
+      nl: ['3 dagen', '1 dag en 1 uur', '2 uur', '0 uur'],
+    }[locale.code];
+    expect([span(3, 0), span(1, 1), span(0, 2), span(0, 0)]).toEqual(said);
   });
 
   it('names the three vehicles', () => {
@@ -59,5 +61,15 @@ describe('English', () => {
     expect(words.headline.waiting).toBe('Sam is in the van');
     expect(words.vehicle).toBe('Van');
     expect(words.headline.run).toBe('Sam’s turn');
+  });
+});
+
+describe('the Dutch possessive', () => {
+  const share = (name) => LOCALES.nl.words({ name, vehicle: 'bus' }).share;
+
+  it('takes only an apostrophe after an s sound, an apostrophe and an s after a vowel, and an s otherwise', () => {
+    expect(share('Thomas')).toBe('Thomas’ deel');
+    expect(share('Angela')).toBe('Angela’s deel');
+    expect(share('Sam')).toBe('Sams deel');
   });
 });

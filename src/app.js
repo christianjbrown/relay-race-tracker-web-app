@@ -1,7 +1,5 @@
-const REDRAW_MS = 30 * 1000;
-
 /**
- * The live loop: poll the trackers, work out what the runner is doing, and
+ * The live page: poll the trackers, work out what the runner is doing, and
  * draw it all - the runner, the vehicle, the journey and the card.
  */
 export class App {
@@ -29,27 +27,11 @@ export class App {
     this.groupMarker = deps.groupMarker;
     this.birthday = deps.birthday;
     this.tuning = deps.tuning;
-    this.timers = deps.timers;
-    this.view = null;
-    this.sheet = null;
   }
 
-  /** The map view and the sheet, which are made after the app because they ask it where the runner is. */
-  attach(view, sheet) {
-    this.view = view;
-    this.sheet = sheet;
-  }
-
-  /** Keeps polling and redrawing: the clock moves even when the trackers do not. */
-  run() {
-    this.timers.setInterval(() => this.poll(), this.tuning.pollMs);
-    this.timers.setInterval(() => this.render(), REDRAW_MS);
-  }
-
-  async poll() {
-    await this.poller.poll();
-    this.render();
-    if (this.view?.following()) this.view.centre();
+  /** Asks the trackers where everyone is. */
+  poll() {
+    return this.poller.poll();
   }
 
   /** What the runner is doing now: the timeline, corrected by the trackers. */
@@ -109,7 +91,6 @@ export class App {
     const trip = act.kind === 'drive' && vehicle ? this.eta.estimate(act.seg, vehicle, now) : null;
     const handover = incoming ? this.incoming.arrival(incoming, this.pace.kmh(this.tuning.jogKmh)) : null;
     this.card.render(now, fix, act, trip, this.legFinish.at(now, act), handover);
-    this.sheet?.refresh();
   }
 
   /**

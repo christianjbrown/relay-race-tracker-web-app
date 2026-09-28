@@ -2,8 +2,10 @@
 //
 // Retakes the README's screenshots of the example site: each scene in
 // scenes.json on each device, against a pretend Chronorace feed, so the
-// page looks as it does during a relay. Needs Google Chrome and a Maps key
-// that allows http://localhost:8765/, given as MAPS_API_KEY.
+// page looks as it does during a relay. A scene with `rewindTo` is taken
+// after the relay is over, with the congratulations closed and the rewind
+// slid back to that moment. Needs Google Chrome and a Maps key that allows
+// http://localhost:8765/, given as MAPS_API_KEY.
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import http from 'node:http';
@@ -18,6 +20,8 @@ const ROOT = path.resolve(HERE, '../..');
 const PORT = 8765;
 const DEBUG_PORT = 9333;
 const SETTLE_MS = 15000;
+const REDRAW_MS = 4000;
+const REWIND_STEPS = 1000;
 const CHROME = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.txt': 'text/plain' };
 
@@ -125,10 +129,14 @@ class Browser {
     });
   }
 
-  async shoot(url, device, file) {
+  async shoot(url, device, file, script = null) {
     await this.send('Emulation.setDeviceMetricsOverride', { width: device.width, height: device.height, deviceScaleFactor: device.scale, mobile: device.mobile });
     await this.send('Page.navigate', { url });
     await sleep(SETTLE_MS);
+    if (script) {
+      await this.send('Runtime.evaluate', { expression: script });
+      await sleep(REDRAW_MS);
+    }
     const { data } = await this.send('Page.captureScreenshot', { format: 'png' });
     await fs.writeFile(file, Buffer.from(data, 'base64'));
   }
@@ -153,13 +161,26 @@ const index = path.join(out, 'index.html');
 const html = await fs.readFile(index, 'utf8');
 await fs.writeFile(index, html.replace('</head>', `${fakeFeed(byScene, { run: config.chronorace.runnerTracker, van: config.chronorace.vehicleTracker })}\n</head>`));
 
+/** For a scene with `rewindTo`: close the congratulations and slide the rewind back to that moment. */
+function rewindScript(scene, schedule, timezone) {
+  if (!scene.rewindTo) return null;
+  const from = new Date(schedule.segments[0].start).getTime();
+  const to = new Date(schedule.segments.at(-1).end).getTime();
+  const value = Math.round(((parseInZone(scene.rewindTo, timezone).getTime() - from) / (to - from)) * REWIND_STEPS);
+  return `document.getElementById('celebration-close').click();
+    const range = document.getElementById('rewind-range');
+    range.value = '${value}';
+    range.dispatchEvent(new Event('input'));`;
+}
+
+const schedule = await readJson(path.join(ROOT, plan.config, 'schedule.json'));
 const server = await serve(out);
 const browser = await Browser.open(path.join(work, 'chrome'));
 try {
   for (const scene of plan.scenes) {
     for (const [name, device] of Object.entries(plan.devices)) {
       const file = path.join(ROOT, 'docs', `screenshot-${scene.name}-${name}.png`);
-      await browser.shoot(`http://localhost:${PORT}/?at=${scene.at}&scene=${scene.name}`, device, file);
+      await browser.shoot(`http://localhost:${PORT}/?at=${scene.at}&scene=${scene.name}`, device, file, rewindScript(scene, schedule, config.timezone));
       console.log(`${path.relative(ROOT, file)}: ${scene.about}`);
     }
   }

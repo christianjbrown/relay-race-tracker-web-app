@@ -44,6 +44,27 @@
         "lat": 51.0561,
         "lng": 3.7305
       }
+    },
+    {
+      "name": "finish",
+      "about": "Sam and the team over the line in Brussels, with fireworks and what their legs added up to",
+      "at": "2027-05-16T14:00",
+      "teamKm": 270.9,
+      "vehicle": {
+        "lat": 50.8465,
+        "lng": 4.3522
+      }
+    },
+    {
+      "name": "rewind",
+      "about": "The relay rewound, once it was over, to Sam on leg 2 on the Saturday evening",
+      "at": "2027-05-16T14:00",
+      "teamKm": 270.9,
+      "vehicle": {
+        "lat": 50.8465,
+        "lng": 4.3522
+      },
+      "rewindTo": "2027-05-15T19:30"
     }
   ]
 }

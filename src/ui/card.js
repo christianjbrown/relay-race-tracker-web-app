@@ -1,15 +1,17 @@
 /**
  * The card over the map: what the runner is doing, how far through it they
  * are, what comes next, how fresh the position is, whether their face opens
- * Street View, the whole schedule, and the congratulations at the end.
+ * Street View, the rewind once it is over, the whole schedule, and the
+ * congratulations at the end.
  */
 export class Card {
-  constructor({ status, progress, next, meta, look, timeline, celebration }) {
+  constructor({ status, progress, next, meta, look, rewind, timeline, celebration }) {
     this.status = status;
     this.progress = progress;
     this.next = next;
     this.meta = meta;
     this.look = look;
+    this.rewind = rewind;
     this.timeline = timeline;
     this.celebration = celebration;
   }
@@ -27,6 +29,7 @@ export class Card {
     this.next.render(now, act, arrival);
     this.meta.render(now, fix, act);
     this.look.render(fix, act);
+    this.rewind.render(act);
     this.timeline.render(act);
     this.celebration.render(act);
   }
