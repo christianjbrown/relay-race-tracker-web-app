@@ -89,6 +89,31 @@ export class RunProgress {
   }
 }
 
+/**
+ * A stop before a leg whose runner coming in is behind: the stop lasts
+ * until they get there, not until the timeline says.
+ */
+export class HandoverStopProgress {
+  constructor(words, formats) {
+    this.words = words;
+    this.formats = formats;
+  }
+
+  fits({ act, handover }) {
+    return act.seg.kind !== 'run' && act.seg.kind !== 'drive' && Boolean(handover) && handover > act.seg.end;
+  }
+
+  measure({ now, act, handover }) {
+    const start = act.seg.start;
+    return {
+      share: clamp((now - start) / (handover - start), 0, 1),
+      left: this.words.left(this.formats.duration(handover - now)),
+      right: this.words.ends(`~${this.formats.when(handover, now)}`),
+      late: handover - act.seg.end > LATE_MS,
+    };
+  }
+}
+
 /** Anything else: time through the segment, by the timeline. */
 export class TimeProgress {
   constructor(words, formats) {
@@ -118,11 +143,11 @@ export class ProgressView {
     this.measures = measures;
   }
 
-  render(now, act, trip, legEnd) {
+  render(now, act, trip, legEnd, handover = null) {
     const box = this.els.get('progress');
     box.hidden = !act.seg;
     if (!act.seg) return;
-    const ctx = { now, act, trip, legEnd };
+    const ctx = { now, act, trip, legEnd, handover };
     const { share, left, right, late } = this.measures.find((m) => m.fits(ctx)).measure(ctx);
     const fill = this.els.get('progress-fill');
     fill.style.setProperty('--fill', this.colours[act.seg.kind]);
