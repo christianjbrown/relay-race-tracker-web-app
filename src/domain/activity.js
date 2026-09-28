@@ -24,7 +24,7 @@ export class Activity {
     const ctx = { now, planned, paceKmh, runner: fresh(runner), vehicleWaiting: fresh(vehicleWaiting), vehicle: fresh(vehicle) };
 
     let leg = this.legInPlay(planned, now);
-    const wait = this.waits.check(ctx);
+    const wait = this.waits.check({ ...ctx, leg });
     if (wait?.state) return wait.state;
     if (wait?.leg) leg = wait.leg;
 

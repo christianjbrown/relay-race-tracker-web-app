@@ -16,6 +16,10 @@ export class StatusView {
       headline = w.headline.before;
     } else if (state === 'finished') {
       headline = `${w.headline.after} ${this.badges.finished}`;
+    } else if (state === 'waiting' && seg.finish) {
+      // Nobody takes over at the finish: the whole team waits for the last runner and runs in together.
+      headline = `${w.headline.waitingFinish} ${this.badges.finished}`;
+      detail = w.waitingFinishDetail;
     } else if (state === 'waiting') {
       headline = `${w.headline.waiting} ${this.badges.drive}`;
       detail = w.waitingDetail(this.describer.describe(seg));

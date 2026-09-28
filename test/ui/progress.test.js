@@ -37,6 +37,14 @@ describe('WaitingProgress', () => {
     expect(result.late).toBe(false);
   });
 
+  it('says when the finish starts rather than when anyone takes over', () => {
+    const seg = schedule.segments[6];
+    const now = at(335);
+    const eta = at(350);
+    const result = measure.measure({ now, act: { seg, at: 450, wait: { handover: 480, eta } } });
+    expect(result.right).toBe(words.startsAbout(formats.when(eta, now)));
+  });
+
   it('clamps the share to the 0-1 range', () => {
     const seg = schedule.segments[4];
     const before = measure.measure({ now: at(250), act: { seg, at: 90, wait: { handover: 200, eta: at(290) } } });
