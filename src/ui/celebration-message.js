@@ -13,7 +13,7 @@ export class CelebrationMessage {
   text() {
     // The time reads as one phrase, so a narrow card breaks before it rather than inside it.
     const time = this.formats.span(this.summary.ms()).replaceAll(' ', ' ');
-    return this.words.teamRan(this.formats.km(this.summary.km()), time);
+    return this.words.teamRan(this.formats.kmNearWhole(this.summary.km()), time);
   }
 
   close() {

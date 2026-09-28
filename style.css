@@ -555,3 +555,5 @@ h1 {
   min-height: 1.5rem;
   font-size: 0.85rem;
 }
+
+.rewind-row .btn { flex: 0 0 auto; }

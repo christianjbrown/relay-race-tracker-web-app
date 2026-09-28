@@ -13,14 +13,14 @@ describe('CelebrationMessage', () => {
   it('congratulates the runner with how far their team went and for how long, in whole hours', () => {
     const en = say('en', 'en-GB');
     expect(en.title()).toBe('Congratulations Sam! 🎉');
-    expect(en.text()).toBe('Your team ran 232.9 km across 3 days and 2 hours.');
+    expect(en.text()).toBe('Your team ran 233 km across 3 days and 2 hours.');
     expect(en.close()).toBe('Back to the map');
   });
 
   it('says it in German too', () => {
     const de = say('de', 'de-DE');
     expect(de.title()).toBe('Glückwunsch Sam! 🎉');
-    expect(de.text()).toBe('Euer Team ist über 3 Tage und 2 Stunden hinweg 232,9 km gelaufen.');
+    expect(de.text()).toBe('Euer Team ist über 3 Tage und 2 Stunden hinweg 233 km gelaufen.');
     expect(de.close()).toBe('Zurück zur Karte');
   });
 });
