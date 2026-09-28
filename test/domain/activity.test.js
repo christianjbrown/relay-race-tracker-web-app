@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Activity } from '../../src/domain/activity.js';
 import { DriveArrival } from '../../src/domain/drive-arrival.js';
 import { HandoverWait } from '../../src/domain/handover-wait.js';
+import { LateFinish } from '../../src/domain/late-finish.js';
 import { LegProgress } from '../../src/domain/leg-progress.js';
 import { at, fixAt, makeRelay } from '../fixtures/relay.js';
 
@@ -11,6 +12,7 @@ function activity(options) {
     waits: new HandoverWait(schedule, course, states, tuning),
     legs: new LegProgress(schedule, course, states, tuning),
     arrivals: new DriveArrival(schedule, states, tuning),
+    lateFinish: new LateFinish(schedule, states),
   }, tuning);
   return { act, segs: schedule.segments };
 }
@@ -64,8 +66,19 @@ describe('Activity', () => {
   });
 
   it('keeps waiting for the last runner after the finish\'s time, then runs them in', () => {
-    expect(act.at(at(360), { runner: fixAt(450, at(360)) })).toMatchObject({ seg: segs[6], state: 'waiting' });
-    expect(act.at(at(365), { runner: fixAt(485, at(365)) })).toMatchObject({ seg: segs[6], state: 'overrun' });
+    // Its own page: seeing the wait is what makes the finish that follows a late one.
+    const { act: page, segs: s } = activity();
+    expect(page.at(at(360), { runner: fixAt(450, at(360)) })).toMatchObject({ seg: s[6], state: 'waiting' });
+    expect(page.at(at(365), { runner: fixAt(485, at(365)) })).toMatchObject({ seg: s[6], state: 'running' });
+  });
+
+  it('gives a finish that set off late its full planned time before calling it over', () => {
+    const { act: late, segs: s } = activity();
+    // The finish is due at 330 and planned to take 15 minutes; the last runner reaches its start at 360.
+    expect(late.at(at(355), { runner: fixAt(450, at(355)) })).toMatchObject({ seg: s[6], state: 'waiting' });
+    expect(late.at(at(360), { runner: fixAt(500, at(360)) })).toMatchObject({ seg: s[6], state: 'running' });
+    expect(late.at(at(374), { runner: fixAt(500, at(374)) })).toMatchObject({ seg: s[6], state: 'running' });
+    expect(late.at(at(375), { runner: fixAt(500, at(375)) }).state).toBe('finished');
   });
 
   it('is finished once the finish is handed over after its time', () => {
