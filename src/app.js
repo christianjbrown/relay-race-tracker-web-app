@@ -81,7 +81,8 @@ export class App {
     this.timePace(act, incoming, Boolean(runner?.projected));
     const fix = this.locator.where(act, this.live(now));
     this.runnerMarker.update(fix, this.badgeChoice.of(act), this.birthday.on(now));
-    const vehicle = this.poller.liveVehicle(now, this.tuning.staleMs);
+    // Once the relay is over the vehicle is on its own way home, not the team's.
+    const vehicle = act.state === 'finished' ? null : this.poller.liveVehicle(now, this.tuning.staleMs);
     // Only where it really is - an estimated vehicle would be a guess on a
     // guess - and not while the runner is out on a leg without it.
     const onLeg = act.kind === 'run' && act.state !== 'waiting';
