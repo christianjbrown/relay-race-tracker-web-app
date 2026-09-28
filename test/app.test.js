@@ -19,6 +19,7 @@ function makeApp(overrides = {}) {
     incoming: { place: vi.fn(() => null), arrival: vi.fn(() => 'handover-info') },
     projection: { of: vi.fn((fix) => fix) },
     locator: { where: vi.fn(() => ({ lat: 1, lng: 2 })) },
+    streetView: { of: vi.fn(() => 'https://street.view') },
     journey: { pieces: vi.fn(() => ['piece']) },
     eta: { estimate: vi.fn(() => 'eta-info') },
     course: { km: [0, 1, 2, 3] },
@@ -158,6 +159,14 @@ describe('App', () => {
       const result = app.where();
       expect(deps.locator.where).toHaveBeenCalledWith(expect.anything(), deps.poller.live);
       expect(result).toEqual({ lat: 1, lng: 2 });
+    });
+  });
+
+  describe('lookAround', () => {
+    it('asks Street View about what the runner is doing now', () => {
+      const { app, deps } = makeApp();
+      expect(app.lookAround()).toBe('https://street.view');
+      expect(deps.streetView.of).toHaveBeenCalledWith(deps.activity.at.mock.results[0].value, { lat: 1, lng: 2 });
     });
   });
 

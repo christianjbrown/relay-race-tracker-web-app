@@ -6,6 +6,7 @@ import { readSchedule } from './config/schedule-check.js';
 import { readSiteConfig } from './config/site-config.js';
 import { Activity } from './domain/activity.js';
 import { ActivityStates, ClockActivity } from './domain/activity-states.js';
+import { Convoy } from './domain/convoy.js';
 import { Course } from './domain/course.js';
 import { DriveArrival } from './domain/drive-arrival.js';
 import { DriveEta } from './domain/drive-eta.js';
@@ -33,6 +34,7 @@ import { CourseLayer } from './maps/google/course-layer.js';
 import { GoogleDirections } from './maps/google/directions.js';
 import { loadGoogleMaps } from './maps/google/loader.js';
 import { MAP_STYLES } from './maps/google/map-styles.js';
+import { StreetView } from './maps/google/street-view.js';
 import { makePlaceLabel, makeRunnerMarker, makeVehicleMarker } from './maps/google/overlays.js';
 import { Painter } from './maps/google/painter.js';
 import { createMap, GoogleMapSurface } from './maps/google/surface.js';
@@ -52,6 +54,7 @@ import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
 import { DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress } from './ui/progress.js';
+import { RunnerClick } from './ui/runner-click.js';
 import { RunnerSpot } from './ui/runner-spot.js';
 import { SchedulePanel } from './ui/schedule-panel.js';
 import { SheetDrag } from './ui/sheet-drag.js';
@@ -146,13 +149,14 @@ export async function boot(win, state = {}) {
   layer.draw(course.points);
   layer.labelStops(course.points, schedule.segments, (place) => localise(place.name, code));
 
-  const handovers = new HandoverSpotter(tuning);
+  const handovers = new HandoverSpotter(tuning, new Convoy(tuning), new Convoy(tuning));
   const pace = new RunnerPace(tuning);
   const feed = new ChronoraceFeed(config.chronorace.eventId, (...args) => win.fetch(...args));
   const bibs = { runner: config.chronorace.runnerTracker, vehicle: config.chronorace.vehicleTracker };
   let view = null;
+  const runnerClick = new RunnerClick(win, () => app.lookAround(), () => view.follow());
   const RunnerMarker = makeRunnerMarker(maps, win.document);
-  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => view.follow(), spot });
+  const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => runnerClick.click(), spot });
   runnerMarker.setMap(map);
   const VehicleMarker = makeVehicleMarker(maps, win.document);
   const vehicleMarker = new VehicleMarker(`${badges.drive} ${words.vehicle}`);
@@ -175,6 +179,7 @@ export async function boot(win, state = {}) {
     incoming: new IncomingRunner(schedule, course, tuning),
     projection: new RunnerProjection(schedule, course, tuning),
     locator: new RunnerLocator(schedule, course),
+    streetView: new StreetView(course),
     journey: new Journey(schedule, {
       run: new RunPieces(course),
       drive: new DrivePieces(course, router, tuning),

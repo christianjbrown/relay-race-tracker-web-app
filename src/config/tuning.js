@@ -32,6 +32,11 @@ export const DEFAULT_TUNING = Object.freeze({
   // and the vehicle itself not moved more than parkedKm since the last poll.
   clusterKm: 0.15,
   parkedKm: 0.1,
+  // A tracker beside the vehicle or the runner on two polls in a row, and
+  // moved more than convoyMovedKm between them, is travelling with it and
+  // is not a team waiting at a handover. Small enough to catch a walk,
+  // big enough for a parked phone's GPS to wander.
+  convoyMovedKm: 0.04,
   // A drive is over at the door (atDoorKm), or parked within arrivedKm of
   // where it was going.
   atDoorKm: 0.2,
@@ -88,6 +93,7 @@ export function resolveTuning(overrides = {}) {
     meetKm: t.meetKm,
     clusterKm: t.clusterKm,
     parkedKm: t.parkedKm,
+    convoyMovedKm: t.convoyMovedKm,
     atDoorKm: t.atDoorKm,
     arrivedKm: t.arrivedKm,
     vehicleNearStartKm: t.vehicleNearStartKm,

@@ -232,7 +232,7 @@ describe('boot', () => {
     expect(liveCall).toBeTruthy();
     expect(Math.abs(liveCall.drivingOptions.departureTime.getTime() - Date.now())).toBeLessThan(5000);
 
-    // Clicking the runner marker follows it.
+    // Clicking the runner marker follows it, or looks around in Street View on a leg.
     const runnerEl = document.querySelector('.runner');
     expect(runnerEl).toBeTruthy();
     expect(() => runnerEl.dispatchEvent(new Event('click'))).not.toThrow();

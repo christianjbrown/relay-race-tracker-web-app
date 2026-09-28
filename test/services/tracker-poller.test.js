@@ -23,7 +23,7 @@ describe('TrackerPoller', () => {
     expect(feed.devicesByBib).toHaveBeenCalledTimes(1);
     expect(p.live).toEqual({ runner: fixes.r, vehicle: fixes.v });
     expect(p.guessed.size).toBe(0);
-    expect(handovers.observe).toHaveBeenLastCalledWith(fixes.v, [fixes.o]);
+    expect(handovers.observe).toHaveBeenLastCalledWith(fixes.v, [{ ...fixes.o, id: 'o' }], fixes.r);
   });
 
   it('estimates a tracker the feed has no position for', async () => {
@@ -32,6 +32,12 @@ describe('TrackerPoller', () => {
     expect([...p.guessed]).toEqual(['vehicle']);
     expect(logger.error).toHaveBeenCalledWith('Chronorace has no position for tracker VAN1; estimating it from the timeline.');
     expect(handovers.observe).not.toHaveBeenCalled();
+  });
+
+  it('leaves the runner out of the handover spotter when the feed has no position for it', async () => {
+    const { p, handovers } = poller({ fixes: { v: fixes.v } });
+    await p.poll();
+    expect(handovers.observe).toHaveBeenLastCalledWith(fixes.v, [], null);
   });
 
   it('estimates both when the feed fails, and asks for the devices again next time', async () => {
