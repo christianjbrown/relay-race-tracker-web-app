@@ -2,7 +2,7 @@ import { resolveColours } from '../../src/config/colours.js';
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import {
-  DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress,
+  DriveProgress, HandoverStopProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress,
 } from '../../src/ui/progress.js';
 import { Elements } from '../../src/ui/dom.js';
 import { LOCALES } from '../../src/i18n/locales/index.js';
@@ -177,6 +177,35 @@ describe('RunProgress', () => {
     };
     const result = measure.measure({ now, act, legEnd: null });
     expect(result.left).toBe(words.kmLeft(formats.kmFixed(course.between(50, 90))));
+  });
+});
+
+describe('HandoverStopProgress', () => {
+  const measure = new HandoverStopProgress(words, formats);
+  const { schedule } = makeRelay();
+  const segs = schedule.segments;
+  const free = segs[5];
+
+  it('fits a stop whose runner coming in gets there after it was planned to end', () => {
+    expect(measure.fits({ act: { seg: free }, handover: at(360) })).toBe(true);
+    expect(measure.fits({ act: { seg: free }, handover: free.end })).toBe(false);
+    expect(measure.fits({ act: { seg: free }, handover: null })).toBe(false);
+    expect(measure.fits({ act: { seg: segs[3] }, handover: at(360) })).toBe(false);
+    expect(measure.fits({ act: { seg: segs[6] }, handover: at(360) })).toBe(false);
+  });
+
+  it('runs the stop to the runner coming in, and says it ends late', () => {
+    const now = at(330);
+    const handover = at(360);
+    const result = measure.measure({ now, act: { seg: free }, handover });
+    expect(result.share).toBeCloseTo(0.5, 5);
+    expect(result.left).toBe(words.left(formats.duration(handover - now)));
+    expect(result.right).toBe(words.ends(`~${formats.when(handover, now)}`));
+    expect(result.late).toBe(true);
+  });
+
+  it('is not late for a runner only a little behind', () => {
+    expect(measure.measure({ now: at(310), act: { seg: free }, handover: at(333) }).late).toBe(false);
   });
 });
 

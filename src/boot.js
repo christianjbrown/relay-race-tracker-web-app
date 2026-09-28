@@ -66,7 +66,9 @@ import { MotionPreference } from './ui/motion-preference.js';
 import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
-import { DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress } from './ui/progress.js';
+import {
+  DriveProgress, HandoverStopProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress,
+} from './ui/progress.js';
 import { Rewind } from './ui/rewind.js';
 import { RunnerClick } from './ui/runner-click.js';
 import { RunnerSpot } from './ui/runner-spot.js';
@@ -109,6 +111,7 @@ function buildCard(els, page) {
       new WaitingProgress(course, words, formats),
       new DriveProgress(words, formats),
       new RunProgress(course, words, formats),
+      new HandoverStopProgress(words, formats),
       new TimeProgress(words, formats),
     ]),
     next: new NextView(els, words, formats, badges, describer, schedule, colours),

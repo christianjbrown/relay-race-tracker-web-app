@@ -25,7 +25,7 @@ describe('Card', () => {
     const act = { wait: null };
     card.render(now, fix, act);
     expect(views.calls.status).toEqual([now, act]);
-    expect(views.calls.progress).toEqual([now, act, null, null]);
+    expect(views.calls.progress).toEqual([now, act, null, null, null]);
     expect(views.calls.next).toEqual([now, act, null]);
     expect(views.calls.meta).toEqual([now, fix, act]);
     expect(views.calls.look).toEqual([fix, act]);
