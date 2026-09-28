@@ -211,6 +211,12 @@ h1 {
 
 .meta.stale { color: #c0392b; }
 
+.look {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
 .actions {
   display: flex;
   gap: 8px;
@@ -376,7 +382,7 @@ h1 {
 
 .place-label[hidden] { display: none; }
 
-.meta[hidden], .legend li[hidden] { display: none; }
+.meta[hidden], .look[hidden], .legend li[hidden] { display: none; }
 
 .place-label.left { transform: translate(calc(-100% - 14px), -50%); }
 
