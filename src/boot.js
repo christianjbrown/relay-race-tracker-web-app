@@ -17,6 +17,7 @@ import { HandoverWait } from './domain/handover-wait.js';
 import { IncomingRunner } from './domain/incoming-runner.js';
 import { Journey } from './domain/journey.js';
 import { DrivePieces, RunPieces, StopPieces } from './domain/journey-pieces.js';
+import { LateFinish } from './domain/late-finish.js';
 import { LegFinish } from './domain/leg-finish.js';
 import { LegPlacer } from './domain/leg-placer.js';
 import { LegProgress } from './domain/leg-progress.js';
@@ -193,6 +194,7 @@ export async function boot(win, state = {}) {
       waits: new HandoverWait(schedule, course, states, tuning),
       legs: new LegProgress(schedule, course, states, tuning),
       arrivals: new DriveArrival(schedule, states, tuning),
+      lateFinish: new LateFinish(schedule, states),
     }, tuning),
     handovers,
     pace,

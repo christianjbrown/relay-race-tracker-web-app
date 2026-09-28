@@ -4,12 +4,13 @@
  * everything at all when there is no fresh runner position to go on.
  */
 export class Activity {
-  constructor(schedule, states, { waits, legs, arrivals }, tuning) {
+  constructor(schedule, states, { waits, legs, arrivals, lateFinish }, tuning) {
     this.schedule = schedule;
     this.states = states;
     this.waits = waits;
     this.legs = legs;
     this.arrivals = arrivals;
+    this.lateFinish = lateFinish;
     this.tuning = tuning;
   }
 
@@ -18,7 +19,12 @@ export class Activity {
    * when it is parked with the team; `vehicle` the vehicle's in any case,
    * with `parked` set once two polls agree it has not moved.
    */
-  at(now, { runner = null, vehicleWaiting = null, vehicle = null, paceKmh = this.tuning.jogKmh } = {}) {
+  at(now, fixes = {}) {
+    return this.lateFinish.hold(this.judge(now, fixes), now);
+  }
+
+  /** What the trackers and the timeline say, before a late finish is given its time. */
+  judge(now, { runner = null, vehicleWaiting = null, vehicle = null, paceKmh = this.tuning.jogKmh }) {
     const fresh = (fix) => (fix && now - fix.time <= this.tuning.staleMs ? fix : null);
     const planned = this.schedule.at(now);
     const ctx = { now, planned, paceKmh, runner: fresh(runner), vehicleWaiting: fresh(vehicleWaiting), vehicle: fresh(vehicle) };
