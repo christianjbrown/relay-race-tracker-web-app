@@ -382,7 +382,7 @@ h1 {
 
 .place-label[hidden] { display: none; }
 
-.meta[hidden], .look[hidden], .legend li[hidden] { display: none; }
+.meta[hidden], .look[hidden], .rewind[hidden], .rewind-row .btn[hidden], .legend li[hidden] { display: none; }
 
 .place-label.left { transform: translate(calc(-100% - 14px), -50%); }
 
@@ -529,4 +529,29 @@ h1 {
 
 @media (prefers-reduced-motion: reduce) {
   .celebration-card, .celebration-face { animation: none; }
+}
+
+.rewind {
+  margin: 12px 0 0;
+}
+
+.rewind-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.rewind-range {
+  width: 100%;
+  margin: 6px 0 0;
+  accent-color: var(--accent);
+}
+
+.rewind-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 1.5rem;
+  font-size: 0.85rem;
 }

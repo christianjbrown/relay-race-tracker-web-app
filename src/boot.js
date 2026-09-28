@@ -2,6 +2,9 @@
 // every part of the page and connects them. Nothing else calls `new` on a
 // collaborator or reaches for a browser global.
 import { App } from './app.js';
+import { MomentSwitch } from './moment-switch.js';
+import { PageLoop } from './page-loop.js';
+import { ScheduleReplay } from './schedule-replay.js';
 import { readSchedule } from './config/schedule-check.js';
 import { readSiteConfig } from './config/site-config.js';
 import { Activity } from './domain/activity.js';
@@ -64,6 +67,7 @@ import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
 import { DriveProgress, ProgressView, RunProgress, TimeProgress, WaitingProgress } from './ui/progress.js';
+import { Rewind } from './ui/rewind.js';
 import { RunnerClick } from './ui/runner-click.js';
 import { RunnerSpot } from './ui/runner-spot.js';
 import { SchedulePanel } from './ui/schedule-panel.js';
@@ -110,6 +114,7 @@ function buildCard(els, page) {
     next: new NextView(els, words, formats, badges, describer, schedule, colours),
     meta: new MetaView(els, words, formats, config.tuning.staleMs),
     look: new LookHint(els, words, page.streetView),
+    rewind: page.rewind,
     timeline: new TimelineView(els, words, formats, badges, describer, schedule, colours),
     celebration: page.celebration,
   });
@@ -157,7 +162,9 @@ export async function boot(win, state = {}) {
   });
   const celebration = new Celebration(els, new CelebrationMessage(words, formats, new RelaySummary(schedule)), fireworks);
   celebration.bind();
-  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday, streetView, celebration });
+  const rewind = new Rewind(els, words, formats, schedule);
+  rewind.bind();
+  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday, streetView, celebration, rewind });
   card.render(clock.now(), null, new ClockActivity(schedule, states).at(clock.now()));
 
   const maps = await loadGoogleMaps(win, { key: config.mapsApiKey, language: code, region: locale.region });
@@ -176,7 +183,8 @@ export async function boot(win, state = {}) {
   const feed = new ChronoraceFeed(config.chronorace.eventId, (...args) => win.fetch(...args));
   const bibs = { runner: config.chronorace.runnerTracker, vehicle: config.chronorace.vehicleTracker };
   let view = null;
-  const runnerClick = new RunnerClick(win, () => app.lookAround(), () => view.follow());
+  let screen = null;
+  const runnerClick = new RunnerClick(win, () => screen.lookAround(), () => view.follow());
   const RunnerMarker = makeRunnerMarker(maps, win.document);
   const runnerMarker = new RunnerMarker({ avatar: 'avatar.png', alt: config.name, colours: config.colours, badges, onClick: () => runnerClick.click(), spot });
   runnerMarker.setMap(map);
@@ -186,10 +194,21 @@ export async function boot(win, state = {}) {
   const groupMarker = new VehicleMarker(badges.run, 'group-marker');
   groupMarker.setMap(map);
 
+  // Shared by the live page and the rewind, which draw the same things from different sources.
+  const estimator = new Estimator(schedule, course, { run: new RunGuess(course), drive: new DriveGuess(router), sleep: new StopGuess(), free: new StopGuess() });
+  const journey = new Journey(schedule, {
+    run: new RunPieces(course),
+    drive: new DrivePieces(course, router, tuning),
+    sleep: new StopPieces(describer),
+    free: new StopPieces(describer),
+  });
+  const painter = new Painter(maps, map, theme, config.colours);
+  const badgeChoice = new BadgeChoice();
+
   const app = new App({
     clock,
     poller: new TrackerPoller(feed, bibs, handovers, win.console),
-    estimator: new Estimator(schedule, course, { run: new RunGuess(course), drive: new DriveGuess(router), sleep: new StopGuess(), free: new StopGuess() }),
+    estimator,
     activity: new Activity(schedule, states, {
       waits: new HandoverWait(schedule, course, states, tuning),
       legs: new LegProgress(schedule, course, states, tuning),
@@ -203,45 +222,56 @@ export async function boot(win, state = {}) {
     projection: new RunnerProjection(schedule, course, tuning),
     locator: new RunnerLocator(schedule, course),
     streetView,
-    journey: new Journey(schedule, {
-      run: new RunPieces(course),
-      drive: new DrivePieces(course, router, tuning),
-      sleep: new StopPieces(describer),
-      free: new StopPieces(describer),
-    }),
+    journey,
     eta: new DriveEta(router),
     course,
-    painter: new Painter(maps, map, theme, config.colours),
+    painter,
     card,
     runnerMarker,
-    badgeChoice: new BadgeChoice(),
+    badgeChoice,
     vehicleMarker,
     group: new RunningGroup(tuning),
     groupMarker,
     birthday,
     tuning,
-    timers: win,
   });
-  router.onReady(() => app.render());
+  const replay = new ScheduleReplay({
+    rewind,
+    activity: new ClockActivity(schedule, states),
+    estimator,
+    streetView,
+    journey,
+    painter,
+    card,
+    runnerMarker,
+    badgeChoice,
+    vehicleMarker,
+    groupMarker,
+    birthday,
+  });
+  screen = new MomentSwitch(app, replay, rewind);
+  rewind.listen(() => screen.show());
+  router.onReady(() => screen.render());
 
   const cardEl = els.get('card');
   const padding = new MapPadding(cardEl, win);
-  view = new MapView(surface, padding, schedulePanel, win, [...course.points, ...schedule.places()], () => app.where());
+  view = new MapView(surface, padding, schedulePanel, win, [...course.points, ...schedule.places()], () => screen.where());
   const sheet = new SheetDrag(cardEl, [els.get('toggle'), cardEl.querySelector('.status')], schedulePanel, () => view.apply(), win);
   sheet.bind();
   padding.useSheet(sheet);
   view.useSheet(sheet);
-  app.attach(view, sheet);
+  screen.attach(view, sheet);
   const controls = new ViewControls(els, view, surface, win);
   controls.bind();
 
   // Drawn at once from the timeline; the trackers fill in when Chronorace
   // answers, however long that takes.
-  app.render();
+  screen.render();
   view.showWholeRoute();
   controls.watchCard();
-  app.run();
-  await app.poll();
+  const loop = new PageLoop(app, screen, win, tuning);
+  loop.run();
+  await loop.poll();
   return app;
 }
 

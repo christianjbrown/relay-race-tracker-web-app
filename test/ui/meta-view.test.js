@@ -46,6 +46,14 @@ describe('MetaView', () => {
     expect(els.get('meta').classList.contains('stale')).toBe(true);
   });
 
+  it('says a replayed position comes from the schedule, without calling it stale', () => {
+    const { view, els, words } = makeView();
+    const fix = { ...fixAt(10, at(10)), estimated: true, replayed: true };
+    view.render(at(10), fix, { state: 'running' });
+    expect(els.get('meta').textContent).toBe(words.replaying);
+    expect(els.get('meta').classList.contains('stale')).toBe(false);
+  });
+
   it('reports a fresh GPS fix with no stale warning', () => {
     const { view, els, words } = makeView();
     const now = at(10);
