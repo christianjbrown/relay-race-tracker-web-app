@@ -17,8 +17,9 @@ describe('Formats', () => {
   });
 
   it('writes a long stretch in days, hours and minutes', () => {
-    expect(en.span((3 * 1440 + 45) * 60000)).toBe('3 days and 45 minutes');
-    expect(en.span(-1)).toBe('0 minutes');
+    expect(en.span((3 * 1440 + 45) * 60000)).toBe('3 days');
+    expect(en.span((3 * 1440 + 150) * 60000)).toBe('3 days and 2 hours');
+    expect(en.span(-1)).toBe('0 hours');
   });
 
   it('leaves the day out when it is today', () => {

@@ -6,11 +6,10 @@ const VEHICLES = {
 
 const count = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
 
-/** "3 days and 45 minutes": the parts that are not nought, joined as a sentence would. */
-function span(d, h, m) {
-  const parts = [d && count(d, 'day'), h && count(h, 'hour'), m && count(m, 'minute')].filter(Boolean);
-  if (!parts.length) return count(0, 'minute');
-  return parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}`;
+/** "3 days", "3 days and 2 hours": the parts that are not nought, joined as a sentence would. */
+function span(d, h) {
+  const parts = [d && count(d, 'day'), h && count(h, 'hour')].filter(Boolean);
+  return parts.length ? parts.join(' and ') : count(0, 'hour');
 }
 
 /** British English. Every string that names somebody takes the name it is given. */
@@ -59,7 +58,7 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'the tracker may be off',
       noFix: 'No GPS position yet',
-      congratulations: `🎉\u00a0Congratulations ${name}!\u00a0🎉`,
+      congratulations: `Congratulations ${name}!\u00a0🎉`,
       teamRan: (km, time) => `Your team ran ${km}\u00a0km across ${time}.`,
       backToMap: 'Back to the map',
       span,

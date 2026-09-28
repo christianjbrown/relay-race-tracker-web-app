@@ -9,11 +9,10 @@ const genitive = (name) => (/(s|ß|x|z|ce)$/i.test(name) ? `${name}’` : `${nam
 
 const unit = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-/** "3 Tage und 45 Minuten": the parts that are not nought, joined as a sentence would. */
-function span(d, h, m) {
-  const parts = [d && unit(d, 'Tag', 'Tage'), h && unit(h, 'Stunde', 'Stunden'), m && unit(m, 'Minute', 'Minuten')].filter(Boolean);
-  if (!parts.length) return unit(0, 'Minute', 'Minuten');
-  return parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(', ')} und ${parts.at(-1)}`;
+/** "3 Tage", "3 Tage und 2 Stunden": the parts that are not nought, joined as a sentence would. */
+function span(d, h) {
+  const parts = [d && unit(d, 'Tag', 'Tage'), h && unit(h, 'Stunde', 'Stunden')].filter(Boolean);
+  return parts.length ? parts.join(' und ') : unit(0, 'Stunde', 'Stunden');
 }
 
 /** German. Every string that names somebody takes the name it is given. */
@@ -61,7 +60,7 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'Tracker evtl. aus',
       noFix: 'Noch keine GPS-Position',
-      congratulations: `🎉\u00a0Herzlichen Glückwunsch ${name}!\u00a0🎉`,
+      congratulations: `Glückwunsch ${name}!\u00a0🎉`,
       teamRan: (km, time) => `Euer Team ist über ${time} hinweg ${km}\u00a0km gelaufen.`,
       backToMap: 'Zurück zur Karte',
       span,

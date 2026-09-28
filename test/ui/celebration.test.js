@@ -7,7 +7,7 @@ describe('Celebration', () => {
   const make = () => {
     document.body.innerHTML = `<div id="celebration" hidden><h2 id="celebration-title"></h2><p id="celebration-text"></p><button id="celebration-close"></button></div>`;
     const words = { congratulations: 'Well done, Sam!', teamRan: (km, time) => `${km} km in ${time}`, backToMap: 'Back' };
-    const formats = { km: (n) => `${n}`, span: () => '3 days and 45 minutes' };
+    const formats = { km: (n) => `${n}`, span: () => '3 days and 2 hours' };
     const summary = { km: () => 232.9, ms: () => 1 };
     const fireworks = { start: vi.fn(), stop: vi.fn() };
     const c = new Celebration(new Elements(document), words, formats, summary, fireworks);
@@ -27,7 +27,7 @@ describe('Celebration', () => {
     c.render({ state: 'finished' });
     expect(box.hidden).toBe(false);
     expect(document.getElementById('celebration-title').textContent).toBe('Well done, Sam!');
-    expect(document.getElementById('celebration-text').textContent).toBe('232.9 km in 3\u00a0days\u00a0and\u00a045\u00a0minutes');
+    expect(document.getElementById('celebration-text').textContent).toBe('232.9 km in 3\u00a0days\u00a0and\u00a02\u00a0hours');
     expect(document.getElementById('celebration-close').textContent).toBe('Back');
     expect(fireworks.start).toHaveBeenCalledTimes(1);
 
