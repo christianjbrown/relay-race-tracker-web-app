@@ -490,7 +490,7 @@ h1 {
   width: 88px;
   height: 88px;
   transform-origin: 50% 90%;
-  animation: celebration-dance 1.2s ease-in-out infinite;
+  animation: celebration-dance 0.8s ease-in-out infinite alternate;
 }
 
 .celebration-card h2 {
@@ -509,12 +509,10 @@ h1 {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* A little dance: rocking side to side from the chin, with a small hop on each lean. */
+/* A little dance: one swing from side to side, played back and forth, so it only slows at each end. */
 @keyframes celebration-dance {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  25% { transform: rotate(-10deg) translateY(-4px); }
-  50% { transform: rotate(0deg) translateY(0); }
-  75% { transform: rotate(10deg) translateY(-4px); }
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
