@@ -326,7 +326,8 @@ The schedule is a guide, and the trackers correct it:
 - **After the finish** the runner stays on the finish line. 🏁 Once the runner
   tracker agrees the relay is over, or four hours after the schedule ends, the
   page stops asking Chronorace anything and hides the vehicle, which is on its
-  way home rather than with the team.
+  way home rather than with the team. A page first opened an hour or more after
+  the schedule ends goes straight to the finish without asking at all.
 - **If Chronorace fails**, the problem is logged to the browser console and the
   position is estimated from the schedule: time divided equally along the leg
   or the road, or at the stop.
