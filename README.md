@@ -48,6 +48,13 @@ off (the default) unless they want the page to turn up in search engines.
 - A card with what they are doing, how far through it they are, when it will
   end, what is next, and how fresh the GPS position is.
 - The full schedule, in the event's time zone.
+- While they run, a tap on their face opens Google Street View where they are,
+  looking the way the course goes.
+- At the finish, the whole team waiting for the last runner and then running
+  in together, however late that is.
+- Once it is over, congratulations over fireworks with how far the runner's
+  legs added up to and how long the relay took, and a slider to rewind the
+  whole relay from the schedule.
 - A share card and link preview made from the real route, and a birthday cake
   on the day if you give a birthday.
 
@@ -64,6 +71,18 @@ out on the course:
   <img src="docs/screenshot-rest-phone.png" width="24%" alt="The same moment on a phone: Sam resting at the team hotel in Ghent">
 </p>
 
+Over the line, and the relay rewound afterwards to Saturday evening:
+
+<p>
+  <img src="docs/screenshot-finish-desktop.png" width="72%" alt="The example page on a computer after the finish: congratulations to Sam over fireworks, saying the team ran 100.2 km across 1 day and 4 hours">
+  <img src="docs/screenshot-finish-phone.png" width="24%" alt="The same moment on a phone: congratulations to Sam over fireworks">
+</p>
+
+<p>
+  <img src="docs/screenshot-rewind-desktop.png" width="72%" alt="The example page on a computer, rewound after the finish to Saturday at 19:30: Sam on leg 2 from Kortrijk to Oudenaarde, replayed from the schedule, with the rewind slider on the card">
+  <img src="docs/screenshot-rewind-phone.png" width="24%" alt="The same replay on a phone: Sam on leg 2 at 19:30 on Saturday, with the rewind slider">
+</p>
+
 The runner's badge on the map changes with what they are doing:
 
 | Badge | Means |
@@ -76,8 +95,8 @@ The runner's badge on the map changes with what they are doing:
 | 🏁 | finished! |
 | 🎂 | it's their birthday |
 
-The page speaks English 🇬🇧 and German 🇩🇪, and picks whichever the reader's browser
-prefers from the languages you choose.
+The page speaks English 🇬🇧, German 🇩🇪 and Dutch 🇳🇱, and picks whichever the
+reader's browser prefers from the languages you choose.
 
 ## 🧰 What you need
 
@@ -207,7 +226,7 @@ browser sends it to Google, which is why the restrictions matter.
 | `emoji` | Their badge while running. Default `🏃`; `🏃‍♀️` and `🚴` also work. |
 | `birthday` | `"MM-DD"`, to wish them happy birthday on the day. Optional. |
 | `vehicle` | `bus`, `van` or `car`: what the page calls the vehicle. Default `bus`. |
-| `languages` | Which of `en` and `de` to offer. The first is the default. Default `["en"]`. |
+| `languages` | Which of `en`, `de` and `nl` to offer. The first is the default. Default `["en"]`. |
 | `timezone` | The event's time zone, such as `Europe/Brussels`. The schedule is shown in it. |
 | `event.name`, `event.from`, `event.to` | The event and where it starts and finishes, for the page's title, description and share card. Each can be a string or one per language. |
 | `chronorace.eventId` | The event id, as a string. |
