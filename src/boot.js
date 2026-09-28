@@ -25,6 +25,7 @@ import { LegFinish } from './domain/leg-finish.js';
 import { LegPlacer } from './domain/leg-placer.js';
 import { LegProgress } from './domain/leg-progress.js';
 import { RunnerLocator } from './domain/runner-locator.js';
+import { RelayEnd } from './domain/relay-end.js';
 import { RelaySummary } from './domain/relay-summary.js';
 import { RunnerPace } from './domain/runner-pace.js';
 import { RunningGroup } from './domain/running-group.js';
@@ -208,16 +209,17 @@ export async function boot(win, state = {}) {
   const painter = new Painter(maps, map, theme, config.colours);
   const badgeChoice = new BadgeChoice();
 
+  const ending = new RelayEnd(new Activity(schedule, states, {
+    waits: new HandoverWait(schedule, course, states, tuning),
+    legs: new LegProgress(schedule, course, states, tuning),
+    arrivals: new DriveArrival(schedule, states, tuning),
+    lateFinish: new LateFinish(schedule, states),
+  }, tuning), schedule, states, tuning);
   const app = new App({
     clock,
     poller: new TrackerPoller(feed, bibs, handovers, win.console),
     estimator,
-    activity: new Activity(schedule, states, {
-      waits: new HandoverWait(schedule, course, states, tuning),
-      legs: new LegProgress(schedule, course, states, tuning),
-      arrivals: new DriveArrival(schedule, states, tuning),
-      lateFinish: new LateFinish(schedule, states),
-    }, tuning),
+    activity: ending,
     handovers,
     pace,
     legFinish: new LegFinish(course, pace),
@@ -272,7 +274,7 @@ export async function boot(win, state = {}) {
   screen.render();
   view.showWholeRoute();
   controls.watchCard();
-  const loop = new PageLoop(app, screen, win, tuning);
+  const loop = new PageLoop(app, screen, win, tuning, ending);
   loop.run();
   await loop.poll();
   return app;

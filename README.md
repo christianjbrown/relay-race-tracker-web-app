@@ -323,7 +323,10 @@ The schedule is a guide, and the trackers correct it:
   old and for up to an hour. It stops half a kilometre short of the next place
   one of the runner's legs starts or ends, so only a real fix can say a leg has
   changed hands. The card says the tracker is quiet and what pace it assumes.
-- **After the finish** the runner stays on the finish line. 🏁
+- **After the finish** the runner stays on the finish line. 🏁 Once the runner
+  tracker agrees the relay is over, or four hours after the schedule ends, the
+  page stops asking Chronorace anything and hides the vehicle, which is on its
+  way home rather than with the team.
 - **If Chronorace fails**, the problem is logged to the browser console and the
   position is estimated from the schedule: time divided equally along the leg
   or the road, or at the stop.

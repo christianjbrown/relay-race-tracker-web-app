@@ -186,6 +186,17 @@ describe('App', () => {
       expect(deps.vehicleMarker.update).toHaveBeenCalledWith(vehicle);
     });
 
+    it('leaves the vehicle off the map, and out of the journey, once the relay is over', () => {
+      const vehicle = { lat: 1, lng: 1 };
+      const { app, deps } = makeApp({
+        poller: { poll: vi.fn(), liveVehicle: vi.fn(() => vehicle), liveRunner: vi.fn(() => null), live: {}, fillGuesses: vi.fn() },
+        activity: { at: vi.fn(() => ({ kind: null, state: 'finished', index: -1, at: null })) },
+      });
+      app.render();
+      expect(deps.vehicleMarker.update).toHaveBeenCalledWith(null);
+      expect(deps.journey.pieces).toHaveBeenCalledWith(expect.anything(), expect.anything(), null);
+    });
+
     it('shows the rest of the team where the group says, from the runner tracker', () => {
       const runnerFix = { lat: 5, lng: 6, time: new Date('2027-05-15T09:59:00Z') };
       const { app, deps } = makeApp({
