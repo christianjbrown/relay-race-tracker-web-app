@@ -46,6 +46,29 @@ describe('HandoverWait', () => {
     expect(wait.check(ctx(220, { runner: fixAt(150, at(220)) }))).toBeNull();
   });
 
+  describe('at the finish', () => {
+    const finish = segs[6];
+
+    it('waits for the last runner while the finish is due', () => {
+      expect(wait.check(ctx(335, { runner: fixAt(450, at(335)) })).state).toMatchObject({ seg: finish, state: 'waiting', wait: { handover: 480 } });
+    });
+
+    it('keeps waiting past the end of the timeline while the last runner is still coming in', () => {
+      const r = wait.check(ctx(360, { leg: finish, runner: fixAt(450, at(360)) }));
+      expect(r.state).toMatchObject({ seg: finish, state: 'waiting' });
+    });
+
+    it('lets them run in once the last runner reaches the start, however late', () => {
+      expect(wait.check(ctx(360, { leg: finish, runner: fixAt(480, at(360)) }))).toBeNull();
+    });
+
+    it('has nothing to wait for past the end of the timeline without the finish in play', () => {
+      expect(wait.check(ctx(360, { leg: null, runner: fixAt(450, at(360)) }))).toBeNull();
+      expect(wait.overdueFinish(segs[5], finish)).toBeNull();
+      expect(wait.overdueFinish(null, segs[4])).toBeNull();
+    });
+  });
+
   it('takes the parked vehicle as the handover point near the start', () => {
     const vehicle = { ...offCourse(190, 0.1), time: at(220), parked: true };
     const r = wait.check(ctx(220, { runner: fixAt(150, at(220)), vehicle }));

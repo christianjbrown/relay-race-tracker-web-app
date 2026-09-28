@@ -63,6 +63,11 @@ describe('Activity', () => {
     expect(act.at(at(65), { runner: fixAt(99, at(65)) })).toMatchObject({ seg: segs[1], state: 'planned' });
   });
 
+  it('keeps waiting for the last runner after the finish\'s time, then runs them in', () => {
+    expect(act.at(at(360), { runner: fixAt(450, at(360)) })).toMatchObject({ seg: segs[6], state: 'waiting' });
+    expect(act.at(at(365), { runner: fixAt(485, at(365)) })).toMatchObject({ seg: segs[6], state: 'overrun' });
+  });
+
   it('is finished once the finish is handed over after its time', () => {
     expect(act.at(at(350), { runner: fixAt(500, at(350)) }).state).toBe('finished');
   });

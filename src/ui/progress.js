@@ -28,7 +28,7 @@ export class WaitingProgress {
     return {
       share: clamp(share, 0, 1),
       left: this.words.runnerAway(this.formats.duration(act.wait.eta - now)),
-      right: this.words.takesOver(this.formats.when(act.wait.eta, now)),
+      right: (act.seg.finish ? this.words.startsAbout : this.words.takesOver)(this.formats.when(act.wait.eta, now)),
       late: false,
     };
   }

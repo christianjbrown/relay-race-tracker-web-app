@@ -37,6 +37,15 @@ describe('StatusView', () => {
     expect(els.get('headline').textContent).toBe(`${words.headline.after} ${badges.finished}`);
   });
 
+  it('waits for the last runner before the finish, rather than to take over', () => {
+    const { view, els, words, badges } = makeView(null);
+    const { schedule, states } = makeRelay();
+    const act = states.of(schedule.segments[6], 'waiting', {});
+    view.render(at(335), act);
+    expect(els.get('headline').textContent).toBe(`${words.headline.waitingFinish} ${badges.finished}`);
+    expect(els.get('detail').textContent).toBe(words.waitingFinishDetail);
+  });
+
   it('shows the waiting headline and detail', () => {
     const { view, els, words, badges } = makeView(null);
     const { schedule, states } = makeRelay();
