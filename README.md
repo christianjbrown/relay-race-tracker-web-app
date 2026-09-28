@@ -5,6 +5,7 @@
 [![Coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen)](#-development)
 [![Node 20, 22, 24](https://img.shields.io/badge/node-20%20%7C%2022%20%7C%2024-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Licence: MIT](https://img.shields.io/github/license/christianjbrown/relay-race-tracker-web-app)](LICENSE)
+[![License](https://img.shields.io/github/license/christianjbrown/relay-race-tracker-web-app)](https://github.com/christianjbrown/relay-race-tracker-web-app/blob/main/LICENSE)
 
 > Where's your runner right now? On a leg, on the bus, or fast asleep in a hotel? 🗺️
 
