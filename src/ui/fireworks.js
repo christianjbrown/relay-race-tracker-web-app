@@ -4,12 +4,11 @@ const CLIMB_MS = 1100;
 const SPARK_GRAVITY = 0.00008;
 const SPARKS = 70;
 const LAUNCH_EVERY_MS = 450;
-const SHOW_MS = 20000;
 
 /**
  * Fireworks over the whole page: rockets rise from the bottom and burst
- * into sparks in the site's own colours. They stop by themselves after a
- * while, and never start for somebody who has asked for less motion.
+ * into sparks in the site's own colours. They keep going until they are
+ * stopped, and never start for somebody who has asked for less motion.
  */
 export class Fireworks {
   constructor(canvas, win, colours, random = Math.random) {
@@ -63,14 +62,9 @@ export class Fireworks {
     this.started ??= t;
     const dt = Math.min(50, t - (this.last ?? t));
     this.last = t;
-    const age = t - this.started;
-    if (age < SHOW_MS && age >= this.launched * LAUNCH_EVERY_MS) this.launch();
+    if (t - this.started >= this.launched * LAUNCH_EVERY_MS) this.launch();
     this.move(dt);
     this.draw();
-    if (age >= SHOW_MS && !this.rockets.length && !this.sparks.length) {
-      this.stop();
-      return;
-    }
     this.win.requestAnimationFrame((next) => this.frame(next));
   }
 

@@ -72,12 +72,14 @@ describe('Fireworks', () => {
     expect(['#a', '#b']).toContain(ctx.strokeStyle);
   });
 
-  it('ends the show by itself once the last sparks fade', () => {
+  it('keeps launching for as long as it is left running', () => {
     const { fireworks, frames, run } = setUp();
     fireworks.start();
     run(60000, 40);
-    expect(fireworks.running).toBe(false);
-    expect(frames).toHaveLength(0);
+    expect(fireworks.running).toBe(true);
+    expect(fireworks.launched).toBeGreaterThan(100);
+    expect(frames).toHaveLength(1);
+    fireworks.stop();
     expect(fireworks.sparks).toHaveLength(0);
   });
 
