@@ -9,6 +9,9 @@ export const lngScale = (lat) => Math.cos((lat * Math.PI) / 180);
 /** Straight-line distance in km between two positions. */
 export const kmApart = (a, b) => Math.hypot(a.lat - b.lat, (a.lng - b.lng) * lngScale(a.lat)) * KM_PER_DEGREE;
 
+/** Compass bearing in degrees, clockwise from north, from one position towards another. */
+export const bearing = (a, b) => ((Math.atan2((b.lng - a.lng) * lngScale(a.lat), b.lat - a.lat) * 180) / Math.PI + 360) % 360;
+
 export const lerp = (a, b, t) => a + (b - a) * t;
 
 export const clamp = (value, low, high) => Math.min(high, Math.max(low, value));

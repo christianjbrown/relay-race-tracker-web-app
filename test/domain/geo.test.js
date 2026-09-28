@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alongPath, clamp, decodePolyline, encodePolyline, kmApart, lerp, lngScale, nearestOnPath, roundToKm, shareOf } from '../../src/domain/geo.js';
+import { alongPath, bearing, clamp, decodePolyline, encodePolyline, kmApart, lerp, lngScale, nearestOnPath, roundToKm, shareOf } from '../../src/domain/geo.js';
 
 describe('distances', () => {
   it('measures a degree of latitude as 111.2 km', () => {
@@ -106,5 +106,14 @@ describe('encodePolyline', () => {
 
   it('encodes no points as nothing', () => {
     expect(encodePolyline([])).toBe('');
+  });
+});
+
+describe('bearing', () => {
+  it('reads clockwise from north', () => {
+    expect(bearing({ lat: 50, lng: 4 }, { lat: 51, lng: 4 })).toBeCloseTo(0, 5);
+    expect(bearing({ lat: 50, lng: 4 }, { lat: 50, lng: 5 })).toBeCloseTo(90, 5);
+    expect(bearing({ lat: 50, lng: 4 }, { lat: 49, lng: 4 })).toBeCloseTo(180, 5);
+    expect(bearing({ lat: 50, lng: 4 }, { lat: 50, lng: 3 })).toBeCloseTo(270, 5);
   });
 });

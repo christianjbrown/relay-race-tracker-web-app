@@ -16,6 +16,7 @@ export class App {
     this.incoming = deps.incoming;
     this.projection = deps.projection;
     this.locator = deps.locator;
+    this.streetView = deps.streetView;
     this.journey = deps.journey;
     this.eta = deps.eta;
     this.course = deps.course;
@@ -70,6 +71,13 @@ export class App {
   where() {
     const now = this.clock.now();
     return this.locator.where(this.now(now), this.live(now));
+  }
+
+  /** Street View where the runner is out on a leg now, or null. */
+  lookAround() {
+    const now = this.clock.now();
+    const act = this.now(now);
+    return this.streetView.of(act, this.locator.where(act, this.live(now)));
   }
 
   /** The runner tracker's fix, carried on along the course while it is quiet. */
