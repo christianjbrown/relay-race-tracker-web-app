@@ -16,6 +16,12 @@ describe('Formats', () => {
     expect(en.dayKey(d)).toBe('2027-05-15');
   });
 
+  it('writes a long stretch in days, hours and minutes', () => {
+    expect(en.span((3 * 1440 + 45) * 60000)).toBe('3 days');
+    expect(en.span((3 * 1440 + 150) * 60000)).toBe('3 days and 2 hours');
+    expect(en.span(-1)).toBe('0 hours');
+  });
+
   it('leaves the day out when it is today', () => {
     expect(en.when(d, new Date('2027-05-15T20:00:00Z'))).toBe('09:05');
     expect(en.when(d, new Date('2027-05-15T22:30:00Z'))).toBe('Sat 09:05');

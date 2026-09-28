@@ -37,6 +37,12 @@ export class Formats {
     return h === 0 ? this.words.minutes(m) : this.words.hours(h, m);
   }
 
+  /** A long stretch of time in whole days and hours, rounded down, leaving out either that is nought. */
+  span(ms) {
+    const hours = Math.max(0, Math.floor(ms / 3600000));
+    return this.words.span(Math.floor(hours / 24), hours % 24);
+  }
+
   ago(date, now) {
     const secs = Math.round((date - now) / 1000);
     const abs = Math.abs(secs);

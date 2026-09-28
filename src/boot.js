@@ -21,6 +21,7 @@ import { LegFinish } from './domain/leg-finish.js';
 import { LegPlacer } from './domain/leg-placer.js';
 import { LegProgress } from './domain/leg-progress.js';
 import { RunnerLocator } from './domain/runner-locator.js';
+import { RelaySummary } from './domain/relay-summary.js';
 import { RunnerPace } from './domain/runner-pace.js';
 import { RunningGroup } from './domain/running-group.js';
 import { RunnerProjection } from './domain/runner-projection.js';
@@ -51,6 +52,13 @@ import { CardLabels } from './ui/card-labels.js';
 import { Elements } from './ui/dom.js';
 import { MapPadding } from './ui/map-padding.js';
 import { LookHint } from './ui/look-hint.js';
+import { CanvasFit } from './ui/canvas-fit.js';
+import { Celebration } from './ui/celebration.js';
+import { CelebrationMessage } from './ui/celebration-message.js';
+import { Fireworks } from './ui/fireworks.js';
+import { FireworksPainter } from './ui/fireworks-painter.js';
+import { FireworksShow } from './ui/fireworks-show.js';
+import { MotionPreference } from './ui/motion-preference.js';
 import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
@@ -102,6 +110,7 @@ function buildCard(els, page) {
     meta: new MetaView(els, words, formats, config.tuning.staleMs),
     look: new LookHint(els, words, page.streetView),
     timeline: new TimelineView(els, words, formats, badges, describer, schedule, colours),
+    celebration: page.celebration,
   });
 }
 
@@ -138,7 +147,16 @@ export async function boot(win, state = {}) {
   const schedulePanel = new SchedulePanel(els);
   schedulePanel.bind();
   const streetView = new StreetView(course);
-  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday, streetView });
+  const canvas = els.get('fireworks');
+  const fireworks = new Fireworks(canvas, win, {
+    show: new FireworksShow(Object.values(config.colours)),
+    painter: new FireworksPainter(),
+    fit: new CanvasFit(canvas, win),
+    motion: new MotionPreference(win),
+  });
+  const celebration = new Celebration(els, new CelebrationMessage(words, formats, new RelaySummary(schedule)), fireworks);
+  celebration.bind();
+  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday, streetView, celebration });
   card.render(clock.now(), null, new ClockActivity(schedule, states).at(clock.now()));
 
   const maps = await loadGoogleMaps(win, { key: config.mapsApiKey, language: code, region: locale.region });
