@@ -490,7 +490,7 @@ h1 {
   width: 88px;
   height: 88px;
   transform-origin: 50% 90%;
-  animation: celebration-dance 0.8s ease-in-out infinite alternate;
+  animation: celebration-dance 0.45s ease-in-out infinite alternate;
 }
 
 .celebration-card h2 {
