@@ -50,6 +50,7 @@ import { Card } from './ui/card.js';
 import { CardLabels } from './ui/card-labels.js';
 import { Elements } from './ui/dom.js';
 import { MapPadding } from './ui/map-padding.js';
+import { LookHint } from './ui/look-hint.js';
 import { MapView } from './ui/map-view.js';
 import { MetaView } from './ui/meta-view.js';
 import { NextView } from './ui/next-view.js';
@@ -99,6 +100,7 @@ function buildCard(els, page) {
     ]),
     next: new NextView(els, words, formats, badges, describer, schedule, colours),
     meta: new MetaView(els, words, formats, config.tuning.staleMs),
+    look: new LookHint(els, words, page.streetView),
     timeline: new TimelineView(els, words, formats, badges, describer, schedule, colours),
   });
 }
@@ -135,7 +137,8 @@ export async function boot(win, state = {}) {
   new CardLabels(els, words, code, theme, config.colours).render();
   const schedulePanel = new SchedulePanel(els);
   schedulePanel.bind();
-  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday });
+  const streetView = new StreetView(course);
+  const card = buildCard(els, { words, formats, badges, describer, schedule, course, config, birthday, streetView });
   card.render(clock.now(), null, new ClockActivity(schedule, states).at(clock.now()));
 
   const maps = await loadGoogleMaps(win, { key: config.mapsApiKey, language: code, region: locale.region });
@@ -179,7 +182,7 @@ export async function boot(win, state = {}) {
     incoming: new IncomingRunner(schedule, course, tuning),
     projection: new RunnerProjection(schedule, course, tuning),
     locator: new RunnerLocator(schedule, course),
-    streetView: new StreetView(course),
+    streetView,
     journey: new Journey(schedule, {
       run: new RunPieces(course),
       drive: new DrivePieces(course, router, tuning),

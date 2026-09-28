@@ -1,13 +1,15 @@
 /**
  * The card over the map: what the runner is doing, how far through it they
- * are, what comes next, how fresh the position is, and the whole schedule.
+ * are, what comes next, how fresh the position is, whether their face opens
+ * Street View, and the whole schedule.
  */
 export class Card {
-  constructor({ status, progress, next, meta, timeline }) {
+  constructor({ status, progress, next, meta, look, timeline }) {
     this.status = status;
     this.progress = progress;
     this.next = next;
     this.meta = meta;
+    this.look = look;
     this.timeline = timeline;
   }
 
@@ -23,6 +25,7 @@ export class Card {
     const arrival = act.wait?.eta ?? legEnd ?? latest(trip?.arrival, handover);
     this.next.render(now, act, arrival);
     this.meta.render(now, fix, act);
+    this.look.render(fix, act);
     this.timeline.render(act);
   }
 }

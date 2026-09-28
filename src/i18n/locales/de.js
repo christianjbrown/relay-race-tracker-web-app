@@ -52,6 +52,7 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'Tracker evtl. aus',
       noFix: 'Noch keine GPS-Position',
+      lookAround: `Tippe auf ${name} in der Karte, um dich in Street View umzusehen`,
       retrying: 'Die Karte hat nicht geladen – neuer Versuch …',
       estimated: 'Chronorace gerade nicht erreichbar – Position anhand des Zeitplans geschätzt',
       projected: (since, kmh) => `Läufer-Tracker seit ${since} still – Position mit ${kmh} km/h hochgerechnet`,

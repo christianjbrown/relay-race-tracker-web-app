@@ -9,6 +9,7 @@ function fakeViews() {
     progress: { render: (...a) => { calls.progress = a; } },
     next: { render: (...a) => { calls.next = a; } },
     meta: { render: (...a) => { calls.meta = a; } },
+    look: { render: (...a) => { calls.look = a; } },
     timeline: { render: (...a) => { calls.timeline = a; } },
   };
 }
@@ -25,6 +26,7 @@ describe('Card', () => {
     expect(views.calls.progress).toEqual([now, act, null, null]);
     expect(views.calls.next).toEqual([now, act, null]);
     expect(views.calls.meta).toEqual([now, fix, act]);
+    expect(views.calls.look).toEqual([fix, act]);
     expect(views.calls.timeline).toEqual([act]);
   });
 
