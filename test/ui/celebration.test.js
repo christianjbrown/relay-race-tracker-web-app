@@ -5,12 +5,10 @@ import { Elements } from '../../src/ui/dom.js';
 
 describe('Celebration', () => {
   const make = () => {
-    document.body.innerHTML = `<div id="celebration" hidden><h2 id="celebration-title"></h2><p id="celebration-text"></p><button id="celebration-close"></button></div>`;
-    const words = { congratulations: 'Well done, Sam!', teamRan: (km, time) => `${km} km in ${time}`, backToMap: 'Back' };
-    const formats = { km: (n) => `${n}`, span: () => '3 days and 2 hours' };
-    const summary = { km: () => 232.9, ms: () => 1 };
+    document.body.innerHTML = '<div id="celebration" hidden><h2 id="celebration-title"></h2><p id="celebration-text"></p><button id="celebration-close"></button></div>';
+    const message = { title: () => 'Well done, Sam!', text: () => '232.9 km across 3 days', close: () => 'Back' };
     const fireworks = { start: vi.fn(), stop: vi.fn() };
-    const c = new Celebration(new Elements(document), words, formats, summary, fireworks);
+    const c = new Celebration(new Elements(document), message, fireworks);
     c.bind();
     return { c, fireworks, box: document.getElementById('celebration') };
   };
@@ -27,7 +25,7 @@ describe('Celebration', () => {
     c.render({ state: 'finished' });
     expect(box.hidden).toBe(false);
     expect(document.getElementById('celebration-title').textContent).toBe('Well done, Sam!');
-    expect(document.getElementById('celebration-text').textContent).toBe('232.9 km in 3\u00a0days\u00a0and\u00a02\u00a0hours');
+    expect(document.getElementById('celebration-text').textContent).toBe('232.9 km across 3 days');
     expect(document.getElementById('celebration-close').textContent).toBe('Back');
     expect(fireworks.start).toHaveBeenCalledTimes(1);
 

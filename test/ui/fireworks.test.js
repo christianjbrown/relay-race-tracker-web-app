@@ -1,95 +1,70 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Fireworks } from '../../src/ui/fireworks.js';
 
-function setUp({ reduce = false, ratio = 2 } = {}) {
-  const ctx = {
-    setTransform: vi.fn(), clearRect: vi.fn(), fillRect: vi.fn(), beginPath: vi.fn(), moveTo: vi.fn(), lineTo: vi.fn(), stroke: vi.fn(),
-  };
+function setUp({ reduced = false, resized = true } = {}) {
+  const ctx = {};
   const canvas = { getContext: vi.fn(() => ctx) };
   const frames = [];
-  const win = {
-    matchMedia: vi.fn(() => ({ matches: reduce })),
-    devicePixelRatio: ratio,
-    innerWidth: 400,
-    innerHeight: 800,
-    requestAnimationFrame: vi.fn((f) => frames.push(f)),
+  const win = { requestAnimationFrame: vi.fn((f) => frames.push(f)) };
+  const parts = {
+    show: { reset: vi.fn(), resize: vi.fn(), tick: vi.fn() },
+    painter: { paint: vi.fn(), clear: vi.fn() },
+    fit: { fit: vi.fn(() => resized), width: 375, height: 812 },
+    motion: { reduced: () => reduced },
   };
-  const fireworks = new Fireworks(canvas, win, ['#a', '#b'], () => 0.5);
-  // Runs queued frames at `step` ms apart until `until` ms, or none are left.
-  const run = (until, step = 16) => {
-    let t = 0;
-    while (frames.length && t <= until) {
-      frames.shift()(t);
-      t += step;
-    }
-  };
-  return { fireworks, ctx, canvas, win, frames, run };
+  return { fireworks: new Fireworks(canvas, win, parts), ctx, canvas, win, frames, ...parts };
 }
 
 describe('Fireworks', () => {
   it('stays still for somebody who asked for less motion', () => {
-    const { fireworks, win, canvas } = setUp({ reduce: true });
+    const { fireworks, canvas, win } = setUp({ reduced: true });
     fireworks.start();
     expect(fireworks.running).toBe(false);
     expect(canvas.getContext).not.toHaveBeenCalled();
     expect(win.requestAnimationFrame).not.toHaveBeenCalled();
-    fireworks.stop();
   });
 
-  it('sizes the canvas to the screen at its pixel ratio, and starts only once', () => {
-    const { fireworks, canvas, ctx, win, run } = setUp();
+  it('starts once, then moves the show on and paints it every frame', () => {
+    const { fireworks, frames, show, painter, fit, ctx, win } = setUp();
     fireworks.start();
     fireworks.start();
     expect(win.requestAnimationFrame).toHaveBeenCalledTimes(1);
-    run(0);
-    expect(canvas.width).toBe(800);
-    expect(canvas.height).toBe(1600);
-    expect(ctx.setTransform).toHaveBeenCalledWith(2, 0, 0, 2, 0, 0);
-  });
-
-  it('follows the size the canvas is shown at, and only resizes when it changes', () => {
-    const { fireworks, canvas, ctx, run } = setUp({ ratio: 0 });
-    canvas.clientWidth = 300;
-    canvas.clientHeight = 600;
-    fireworks.start();
-    run(32);
-    expect(canvas.width).toBe(300);
-    expect(ctx.setTransform).toHaveBeenCalledTimes(1);
-    canvas.clientWidth = 600;
-    canvas.clientHeight = 300;
-    run(100);
-    expect([canvas.width, canvas.height]).toEqual([600, 300]);
-    expect(ctx.setTransform).toHaveBeenCalledTimes(2);
-  });
-
-  it('launches rockets that burst into sparks in the given colours', () => {
-    const { fireworks, ctx, run } = setUp();
-    fireworks.start();
-    run(3000);
-    expect(fireworks.launched).toBeGreaterThan(1);
-    expect(ctx.fillRect).toHaveBeenCalled();
-    expect(ctx.stroke).toHaveBeenCalled();
-    expect(['#a', '#b']).toContain(ctx.strokeStyle);
-  });
-
-  it('keeps launching for as long as it is left running', () => {
-    const { fireworks, frames, run } = setUp();
-    fireworks.start();
-    run(60000, 40);
-    expect(fireworks.running).toBe(true);
-    expect(fireworks.launched).toBeGreaterThan(100);
+    expect(show.reset).toHaveBeenCalledTimes(1);
+    frames.shift()(16);
+    expect(fit.fit).toHaveBeenCalledWith(ctx);
+    expect(show.resize).toHaveBeenCalledWith(375, 812);
+    expect(show.tick).toHaveBeenCalledWith(16);
+    expect(painter.paint).toHaveBeenCalledWith(ctx, show);
     expect(frames).toHaveLength(1);
-    fireworks.stop();
-    expect(fireworks.sparks).toHaveLength(0);
   });
 
-  it('draws nothing more once stopped', () => {
-    const { fireworks, ctx, frames } = setUp();
+  it('only resizes the show when the canvas changed size', () => {
+    const { fireworks, frames, show } = setUp({ resized: false });
+    fireworks.start();
+    frames.shift()(16);
+    expect(show.resize).not.toHaveBeenCalled();
+    expect(show.tick).toHaveBeenCalled();
+  });
+
+  it('keeps going until stopped, then clears the canvas and draws nothing more', () => {
+    const { fireworks, frames, show, painter, ctx } = setUp();
+    fireworks.start();
+    for (let t = 0; t < 100; t++) frames.shift()(t * 16);
+    expect(fireworks.running).toBe(true);
+    fireworks.stop();
+    expect(painter.clear).toHaveBeenCalledWith(ctx, show);
+    frames.shift()(2000);
+    expect(painter.paint).toHaveBeenCalledTimes(100);
+    expect(frames).toHaveLength(0);
+  });
+
+  it('does nothing when stopped before it started, and reuses its drawing context when started again', () => {
+    const { fireworks, painter, canvas } = setUp();
+    fireworks.stop();
+    expect(painter.clear).not.toHaveBeenCalled();
     fireworks.start();
     fireworks.stop();
-    expect(ctx.clearRect).not.toHaveBeenCalled();
-    frames.shift()(0);
-    expect(ctx.clearRect).not.toHaveBeenCalled();
-    expect(frames).toHaveLength(0);
+    fireworks.start();
+    expect(canvas.getContext).toHaveBeenCalledTimes(1);
   });
 });
