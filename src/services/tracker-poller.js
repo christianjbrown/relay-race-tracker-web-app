@@ -23,7 +23,7 @@ export class TrackerPoller {
       this.devices ??= await this.feed.devicesByBib();
       const fixes = await this.feed.positions();
       for (const which of ['runner', 'vehicle']) this.take(which, fixes[this.devices[this.bibs[which]]]);
-      if (!this.guessed.has('vehicle')) this.handovers.observe(this.live.vehicle, this.others(fixes));
+      if (!this.guessed.has('vehicle')) this.handovers.observe(this.live.vehicle, this.others(fixes), this.guessed.has('runner') ? null : this.live.runner);
     } catch (e) {
       this.logger.error('Chronorace request failed; estimating positions from the timeline.', e);
       this.devices = null;
@@ -40,10 +40,10 @@ export class TrackerPoller {
     this.guessed.add(which);
   }
 
-  /** Every other tracker in the event: the rest of the team's vehicles and runners. */
+  /** Every other tracker in the event, with its device id: the rest of the team's vehicles and runners. */
   others(fixes) {
     const mine = new Set([this.devices[this.bibs.runner], this.devices[this.bibs.vehicle]]);
-    return Object.entries(fixes).filter(([id]) => !mine.has(id)).map(([, fix]) => fix);
+    return Object.entries(fixes).filter(([id]) => !mine.has(id)).map(([id, fix]) => ({ ...fix, id }));
   }
 
   /**

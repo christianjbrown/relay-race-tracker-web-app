@@ -6,6 +6,7 @@ import { readSchedule } from './config/schedule-check.js';
 import { readSiteConfig } from './config/site-config.js';
 import { Activity } from './domain/activity.js';
 import { ActivityStates, ClockActivity } from './domain/activity-states.js';
+import { Convoy } from './domain/convoy.js';
 import { Course } from './domain/course.js';
 import { DriveArrival } from './domain/drive-arrival.js';
 import { DriveEta } from './domain/drive-eta.js';
@@ -146,7 +147,7 @@ export async function boot(win, state = {}) {
   layer.draw(course.points);
   layer.labelStops(course.points, schedule.segments, (place) => localise(place.name, code));
 
-  const handovers = new HandoverSpotter(tuning);
+  const handovers = new HandoverSpotter(tuning, new Convoy(tuning), new Convoy(tuning));
   const pace = new RunnerPace(tuning);
   const feed = new ChronoraceFeed(config.chronorace.eventId, (...args) => win.fetch(...args));
   const bibs = { runner: config.chronorace.runnerTracker, vehicle: config.chronorace.vehicleTracker };
