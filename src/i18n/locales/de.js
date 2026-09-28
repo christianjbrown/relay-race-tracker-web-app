@@ -61,7 +61,7 @@ export default {
       lastFix: (ago) => `GPS ${ago}`,
       stale: 'Tracker evtl. aus',
       noFix: 'Noch keine GPS-Position',
-      congratulations: `🎉 Herzlichen Glückwunsch, ${name}! 🎉`,
+      congratulations: `🎉\u00a0Herzlichen Glückwunsch, ${name}!\u00a0🎉`,
       teamRan: (km, time) => `Euer Team ist über ${time} hinweg ${km}\u00a0km gelaufen.`,
       backToMap: 'Zurück zur Karte',
       span,

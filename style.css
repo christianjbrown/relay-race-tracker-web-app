@@ -496,6 +496,7 @@ h1 {
 .celebration-card h2 {
   margin: 12px 0 8px;
   font-size: 1.4rem;
+  text-wrap: balance;
 }
 
 .celebration-card p {
