@@ -490,7 +490,9 @@ h1 {
   width: 88px;
   height: 88px;
   transform-origin: 50% 90%;
-  animation: celebration-dance 0.45s ease-in-out infinite alternate;
+  animation:
+    celebration-sway 0.5s ease-in-out infinite alternate,
+    celebration-bounce 0.25s ease-in-out infinite alternate;
 }
 
 .celebration-card h2 {
@@ -510,10 +512,19 @@ h1 {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* A little dance: one swing from side to side, played back and forth, so it only slows at each end. */
-@keyframes celebration-dance {
-  from { transform: rotate(-9deg); }
-  to { transform: rotate(9deg); }
+/*
+ * A little dance: a sway from side to side, and a bounce at twice its pace
+ * that rises at each end of the sway and dips, slightly squashed, through
+ * the middle. Each eases on its own, so neither ever stops short.
+ */
+@keyframes celebration-sway {
+  from { rotate: -9deg; }
+  to { rotate: 9deg; }
+}
+
+@keyframes celebration-bounce {
+  from { translate: 0 -6px; scale: 1; }
+  to { translate: 0 0; scale: 1.04 0.96; }
 }
 
 @media (prefers-reduced-motion: reduce) {
