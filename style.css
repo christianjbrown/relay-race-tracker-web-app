@@ -489,6 +489,8 @@ h1 {
 .celebration-face {
   width: 88px;
   height: 88px;
+  transform-origin: 50% 90%;
+  animation: celebration-dance 1.2s ease-in-out infinite;
 }
 
 .celebration-card h2 {
@@ -507,6 +509,14 @@ h1 {
   to { transform: scale(1); opacity: 1; }
 }
 
+/* A little dance: rocking side to side from the chin, with a small hop on each lean. */
+@keyframes celebration-dance {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-10deg) translateY(-4px); }
+  50% { transform: rotate(0deg) translateY(0); }
+  75% { transform: rotate(10deg) translateY(-4px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .celebration-card { animation: none; }
+  .celebration-card, .celebration-face { animation: none; }
 }
