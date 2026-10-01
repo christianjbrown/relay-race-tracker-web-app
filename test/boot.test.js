@@ -1,127 +1,9 @@
 // @vitest-environment happy-dom
-import fs from 'node:fs';
-import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { boot, loadSite, start } from '../src/boot.js';
-import { fakeMaps, flatProjection } from './fakes/google-maps.js';
-import { publishedRoute } from '../tools/lib/route-file.js';
-
-const TEMPLATE = fs.readFileSync(path.resolve(__dirname, '../index.template.html'), 'utf8');
-const BODY = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[\s\S]*?<\/script>/, '');
-
-const SITE_DIR = path.resolve(__dirname, '../example-config');
-const config = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'config.json'), 'utf8'));
-const schedule = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'schedule.json'), 'utf8'));
-// The page downloads the route as the build publishes it: encoded.
-const route = publishedRoute(JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'route.json'), 'utf8')));
-
-function jsonResponse(body, ok = true, status = 200) {
-  return { ok, status, json: async () => body };
-}
-
-function chronoraceConfig() {
-  return { Trackers: { a: { Bib: 'RUN', DeviceId: 'd1' }, b: { Bib: 'VAN1', DeviceId: 'd2' } } };
-}
-
-function chronoracePositions() {
-  const now = new Date().toISOString();
-  return { d1: { Lat: 51.2, Lon: 2.9, Time: now }, d2: { Lat: 51.21, Lon: 2.91, Time: now } };
-}
-
-/** A fetch stub answering the site's own files and the Chronorace API. */
-function makeFetch({ siteOk = true, siteStatus = 404 } = {}) {
-  return vi.fn(async (url) => {
-    if (String(url).endsWith('data/config.json')) return jsonResponse(config, siteOk, siteStatus);
-    if (String(url).endsWith('data/schedule.json')) return jsonResponse(schedule, siteOk, siteStatus);
-    if (String(url).endsWith('data/route.json')) return jsonResponse(route, siteOk, siteStatus);
-    if (String(url).includes('/api/gps/config/0')) return jsonResponse(chronoraceConfig());
-    if (String(url).includes('/api/gps/get/0')) return jsonResponse(chronoracePositions());
-    throw new Error(`Unexpected fetch: ${url}`);
-  });
-}
-
-function memoryStorage() {
-  const store = new Map();
-  return {
-    getItem: (k) => (store.has(k) ? store.get(k) : null),
-    setItem: (k, v) => store.set(k, v),
-  };
-}
-
-class FakeResizeObserver {
-  observe() {}
-}
-
-/**
- * The real document, except its `head` swallows the Google Maps script
- * rather than really appending it - happy-dom would otherwise try (and
- * fail) to fetch it, since JS file loading is disabled in the test
- * environment.
- */
-function makeDocument() {
-  const fakeHead = { appendChild: () => {} };
-  return new Proxy(document, {
-    get(target, prop, receiver) {
-      if (prop === 'createElement') {
-        return (tag) => (tag === 'script' ? {} : target.createElement(tag));
-      }
-      if (prop === 'head') return fakeHead;
-      const value = Reflect.get(target, prop, receiver);
-      return typeof value === 'function' ? value.bind(target) : value;
-    },
-  });
-}
-
-function makeWin({ search = '', fetch = makeFetch(), localStorage = memoryStorage(), innerWidth = 1200 } = {}) {
-  return {
-    document: makeDocument(),
-    location: { search, reload: vi.fn() },
-    navigator: { languages: ['en'] },
-    fetch,
-    localStorage,
-    console: { error: vi.fn(), warn: vi.fn(), log: vi.fn(), info: vi.fn() },
-    Date,
-    setTimeout: (...args) => setTimeout(...args),
-    setInterval: (...args) => setInterval(...args),
-    ResizeObserver: FakeResizeObserver,
-    requestAnimationFrame: (fn) => setTimeout(fn, 0),
-    cancelAnimationFrame: (id) => clearTimeout(id),
-    addEventListener: () => {},
-    innerWidth,
-    innerHeight: 800,
-  };
-}
-
-const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
-
-/** A fake maps namespace whose maps come with panes and a projection already set, so overlays can draw on them. */
-function readyMaps() {
-  const maps = fakeMaps();
-  const RealMap = maps.Map;
-  maps.Map = class AutoMap extends RealMap {
-    constructor(el, opts) {
-      super(el, opts);
-      this.panes = {
-        floatPane: document.createElement('div'),
-        overlayLayer: document.createElement('div'),
-        overlayMouseTarget: document.createElement('div'),
-      };
-      // In the live DOM tree, not just held in memory, so overlays that get
-      // added to them can be found and clicked like the rest of the page.
-      Object.values(this.panes).forEach((pane) => el.appendChild(pane));
-      this.projection = flatProjection;
-    }
-  };
-  return maps;
-}
-
-async function completeMapLoad(win, maps = readyMaps()) {
-  await tick();
-  win.google = { maps };
-  win.__relayTrackerMapsReady();
-  await tick();
-  return maps;
-}
+import { boot, start } from '../src/boot.js';
+import {
+  BODY, config, completeMapLoad, jsonResponse, makeFetch, makeWin, readyMaps, tick,
+} from './fakes/page.js';
 
 beforeEach(() => {
   document.documentElement.removeAttribute('data-theme');
@@ -130,22 +12,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
-});
-
-describe('loadSite', () => {
-  it('reads config, schedule and route from the given base', async () => {
-    const fetch = makeFetch();
-    const site = await loadSite(fetch);
-    expect(site.config).toEqual(config);
-    expect(site.schedule).toEqual(schedule);
-    expect(site.route).toEqual(route);
-    expect(fetch).toHaveBeenCalledWith('data/config.json');
-  });
-
-  it('throws when a file does not come back ok', async () => {
-    const fetch = makeFetch({ siteOk: false, siteStatus: 500 });
-    await expect(loadSite(fetch)).rejects.toThrow('data/config.json answered 500');
-  });
 });
 
 describe('boot', () => {

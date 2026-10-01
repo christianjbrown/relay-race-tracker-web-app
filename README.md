@@ -378,7 +378,9 @@ The page is plain ES modules with no bundler, served as they are.
 - `src/ui/` draws the card and handles the sheet on phones.
 - `src/maps/google/` is the only code that knows about Google Maps.
 - `src/i18n/` holds the languages. Each is one file in `src/i18n/locales/`.
-- `src/boot.js` builds everything and connects it. It is the only place that
+- `src/boot.js` builds everything and connects it, calling one builder per
+  concern from `src/boot/` (site data, clocks, timeline, ui, map, markers,
+  tracking, drawing, screens, view). Together they are the only place that
   constructs collaborators.
 - `tools/` is the build and the two Chronorace helpers.
 
