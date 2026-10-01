@@ -12,7 +12,12 @@ import { chooseTheme } from '../../src/ui/theme.js';
 import { publishedRoute } from '../../tools/lib/route-file.js';
 
 const TEMPLATE = fs.readFileSync(path.resolve(__dirname, '../../index.template.html'), 'utf8');
-export const BODY = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[\s\S]*?<\/script>/, '');
+// The page body without its script tags. A <template> parses the markup inertly, so nothing in it
+// loads or runs, and the scripts are removed as elements rather than pattern-matched out.
+const bodyTemplate = document.createElement('template');
+bodyTemplate.innerHTML = TEMPLATE.match(/<body>([\s\S]*)<\/body>/)[1];
+bodyTemplate.content.querySelectorAll('script').forEach((script) => script.remove());
+export const BODY = bodyTemplate.innerHTML;
 
 const SITE_DIR = path.resolve(__dirname, '../../example-config');
 export const config = JSON.parse(fs.readFileSync(path.join(SITE_DIR, 'config.json'), 'utf8'));
